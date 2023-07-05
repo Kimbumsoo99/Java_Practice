@@ -1,6 +1,6 @@
 public class Main {
     public static void main(String[] args) {
-
-        System.out.println("Hello world!");
+        String str1 = "Hello";
+        System.out.println(str1.startsWith("h"));
     }
 }
