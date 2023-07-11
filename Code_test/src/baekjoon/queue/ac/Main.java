@@ -3,11 +3,13 @@ package baekjoon.queue.ac;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    public static boolean lastPoll = false;
+    /*
     public static LinkedList<Integer> funcR(LinkedList<Integer> list){
         LinkedList<Integer> returnList = new LinkedList<>();
 //        System.out.print("method");
@@ -20,19 +22,33 @@ public class Main {
             int tmp = list.removeLast();
             returnList.offer(tmp);
         }
-//        for(int i =0;i<returnList.size();i++){
-//            System.out.print(returnList.get(i));
-//        }
-//        System.out.println();
-//        System.out.println("method");
+
         return returnList;
     }
+     */
 
+    public static void funcR(){
+        lastPoll = lastPoll ? false : true;
+        //lastPoll = !lastPoll;
+
+//        System.out.println("R " + lastPoll);
+    }
     public static LinkedList<Integer> funcD(LinkedList<Integer> list){
+//        System.out.println("method");
+//        int length = list.size();
+//        for(int i =0;i<length;i++){
+//            System.out.print(list.get(i));
+//        }
+//        System.out.println(" + " + lastPoll);
+//        System.out.println("method");
         if (list.size() == 0) {
             return null;
         }
-        list.remove();
+        if (lastPoll) {
+            list.pollLast();
+        }else{
+            list.pollFirst();
+        }
         return list;
     }
 
@@ -77,7 +93,7 @@ public class Main {
             for (char op : oper.toCharArray()) {
 //                System.out.println(op);
                 if (op == 'R') {
-                    dq = funcR(dq);
+                    funcR();
 //                    for(int i =0;i<dq.size();i++){
 //                        System.out.print(dq.get(i));
 //                    }
@@ -98,7 +114,7 @@ public class Main {
             int size = dq.size();
             if (size > 0) {
                 for (int i = 0; i < size - 1; i++) {
-                    int tmp = dq.remove();
+                    int tmp = lastPoll ? dq.pollLast() : dq.pollFirst();
                     sb.append(tmp).append(",");
                 }
                 int tmp = dq.remove();
@@ -107,6 +123,7 @@ public class Main {
             else {
                 sb.append("]\n");
             }
+            lastPoll = false;
         }
         System.out.println(sb);
     }
