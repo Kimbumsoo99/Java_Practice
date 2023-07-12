@@ -1,15 +1,16 @@
-package baekjoon.queue.implementation;
-
+package baekjoon.queue.implementation2.java_util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        Queue q = new Queue();
+        Deque<Integer> queue = new LinkedList<>();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
         StringTokenizer st;
@@ -18,17 +19,25 @@ public class Main {
             st = new StringTokenizer(br.readLine());
             String operations = st.nextToken();
             if (operations.equals("push")) {
-                q.push(Integer.parseInt(st.nextToken()));
+                queue.offer(Integer.parseInt(st.nextToken()));
             } else if (operations.equals("pop")) {
-                sb.append(q.pop()).append("\n");
+                if (queue.isEmpty()) {
+                    sb.append(-1).append("\n");
+                } else
+                    sb.append(queue.remove()).append("\n");
             } else if (operations.equals("size")) {
-                sb.append(q.size()).append("\n");
+                sb.append(queue.size()).append("\n");
             } else if (operations.equals("empty")) {
-                sb.append(q.empty()).append("\n");
+                int tmp = queue.isEmpty() ? 1 : 0;
+                sb.append(tmp).append("\n");
             } else if (operations.equals("front")) {
-                sb.append(q.front()).append("\n");
+                Integer tmp = queue.peek();
+                if(tmp == null) tmp = -1;
+                sb.append(tmp).append("\n");
             } else if (operations.equals("back")) {
-                sb.append(q.back()).append("\n");
+                Integer tmp = queue.peekLast();
+                if(tmp == null) tmp = -1;
+                sb.append(tmp).append("\n");
             }
         }
         System.out.println(sb);

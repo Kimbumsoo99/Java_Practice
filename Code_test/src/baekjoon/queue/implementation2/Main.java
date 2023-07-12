@@ -1,16 +1,15 @@
-package baekjoon.queue.implementation.java_util;
+package baekjoon.queue.implementation2;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        Deque<Integer> queue = new LinkedList<>();
+        Queue q = new Queue();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
         StringTokenizer st;
@@ -19,25 +18,17 @@ public class Main {
             st = new StringTokenizer(br.readLine());
             String operations = st.nextToken();
             if (operations.equals("push")) {
-                queue.offer(Integer.parseInt(st.nextToken()));
+                q.push(Integer.parseInt(st.nextToken()));
             } else if (operations.equals("pop")) {
-                if (queue.isEmpty()) {
-                    sb.append(-1).append("\n");
-                } else
-                    sb.append(queue.remove()).append("\n");
+                sb.append(q.pop()).append("\n");
             } else if (operations.equals("size")) {
-                sb.append(queue.size()).append("\n");
+                sb.append(q.size()).append("\n");
             } else if (operations.equals("empty")) {
-                int tmp = queue.isEmpty() ? 1 : 0;
-                sb.append(tmp).append("\n");
+                sb.append(q.empty()).append("\n");
             } else if (operations.equals("front")) {
-                Integer tmp = queue.peek();
-                if(tmp == null) tmp = -1;
-                sb.append(tmp).append("\n");
+                sb.append(q.front()).append("\n");
             } else if (operations.equals("back")) {
-                Integer tmp = queue.peekLast();
-                if(tmp == null) tmp = -1;
-                sb.append(tmp).append("\n");
+                sb.append(q.back()).append("\n");
             }
         }
         System.out.println(sb);
