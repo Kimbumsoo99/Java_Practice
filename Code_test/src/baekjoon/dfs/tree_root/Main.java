@@ -3,72 +3,68 @@ package baekjoon.dfs.tree_root;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[][] Graph;
+    static ArrayList<ArrayList<Integer>> Graph = new ArrayList<>();
     static boolean[] visit;
     static StringBuilder sb = new StringBuilder();
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static int[] parent;
     static int N;
     public static void main(String[] args) throws IOException {
         N = Integer.parseInt(br.readLine());
         StringTokenizer st;
 
-        Graph = new int[N][N];
+        for (int i = 0; i <= N; i++) {
+            Graph.add(new ArrayList<>());
+        }
 
         for (int i = 0; i < N - 1; i++) {
             st = new StringTokenizer(br.readLine());
             int A = Integer.parseInt(st.nextToken());
             int B = Integer.parseInt(st.nextToken());
 
-            Graph[A-1][B-1] = Graph[B-1][A-1] = 1;
+            Graph.get(A-1).add(B-1);
+            Graph.get(B-1).add(A-1);
         }
 
 //        visit = new boolean[N];
-        for (int i = 2; i < N + 1; i++) {
-//            dfs_2(0,i - 1, 0);
-            int num = dfs(i - 1);
-            sb.append(num).append("\n");
+        dfs();
+
+        for (int i = 1; i < N; i++) {
+            sb.append(parent[i]).append("\n");
         }
         System.out.println(sb);
     }
 
-    static int dfs(int correct){
+    static void dfs(){
         Stack<Integer> stack = new Stack<>();
         stack.push(0);
         visit = new boolean[N];
+        parent = new int[N];
         visit[0] = true;
         while (!stack.isEmpty()) {
             int tmp = stack.pop();
-//            System.out.println(tmp);
-            for (int i = 0; i < N; i++) {
-                if (!visit[i] && Graph[tmp][i] == 1) {
-                    if(i == correct) return tmp + 1;
-                    stack.push(i);
-                    visit[i] = true;
+//            System.out.println(tmp + 1);
+            for (int next: Graph.get(tmp)) {
+                if(!visit[next]){
+//                    System.out.println(next + 1 + " " + Graph.get(tmp));
+                    parent[next] = tmp + 1;
+                    visit[next] = true;
+                    stack.push(next);
                 }
             }
-        }
-        return -1;
-    }
-
-//    static void dfs_2(int current, int correct, int root){
-//        visit[current] = true;
-////        System.out.println(current + " " + root);
-//        if (current == correct) {
-//            sb.append(root + 1).append("\n");
-//            return;
-//        }
-//
-//        for (int i = 0; i < N; i++) {
-//            if (!visit[i] && Graph[current][i] == 1) {
-//                visit[i] = true;
-//                dfs_2(i, correct, current);
-//                visit[i] = false;
+//            for (int i = 0; i < N; i++) {
+//                if (!visit[i] && Graph.get(tmp).get(i) == i) {
+//                    if(i == correct) return tmp + 1;
+//                    stack.push(i);
+//                    visit[i] = true;
+//                }
 //            }
-//        }
-//    }
+        }
+    }
 }
