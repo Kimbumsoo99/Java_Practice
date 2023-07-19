@@ -14,4 +14,26 @@ SELECT MAX(PRICE) AS MAX_PRICE FROM PRODUCT;
 
 
 
+-- level 1, 최댓값 구하기
+-- 가장 최근에 들어온 동물은 언제 들어왔는지 조회
+SELECT MAX(DATETIME) AS 시간 FROM ANIMAL_INS;
 
+SELECT DATETIME AS 시간 FROM ANIMAL_INS WHERE DATETIME = (SELECT MAX(DATETIME) FROM ANIMAL_INS)
+
+
+
+-- level 2, 최솟값 구하기
+-- 가장 먼저 들어온 동물은 언제 들어왔는지 조회
+SELECT MIN(DATETIME) AS 시간 FROM ANIMAL_INS;
+
+
+
+-- level 2, 동물 수 구하기
+-- 동물이 몇 마리 들어왔는지 조회
+SELECT COUNT(*) AS COUNT FROM ANIMAL_INS;
+
+
+-- level 2, 중복 제거하기
+-- 동물의 이름은 몇 개인지 조회하는 SQL 문, 이름이 NULL인 경우는 집계하지 않으며 중복되는 이름은 하나
+SELECT COUNT(DISTINCT NAME) AS COUNT FROM ANIMAL_INS;
+SELECT COUNT(NAME) FROM (SELECT DISTINCT NAME FROM ANIMAL_INS);
