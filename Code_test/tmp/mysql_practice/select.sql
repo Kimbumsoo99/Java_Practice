@@ -136,3 +136,72 @@ SELECT NAME, DATETIME FROM ANIMAL_INS ORDER BY ANIMAL_ID DESC;
 -- level 1, 아픈 동물 찾기
 -- 아픈 동물1의 아이디와 이름을 조회, 아이디 순으로 조회
 SELECT ANIMAL_ID, NAME FROM ANIMAL_INS WHERE INTAKE_CONDITION='Sick' ORDER BY ANIMAL_ID;
+
+
+-- level 1, 어린 동물 찾기
+--  젊은 동물1의 아이디와 이름을 조회하는 SQL 문, 아이디 순으로 조회
+SELECT ANIMAL_ID, NAME FROM ANIMAL_INS WHERE NOT INTAKE_CONDITION='Aged' ORDER BY ANIMAL_ID;
+
+SELECT ANIMAL_ID, NAME FROM ANIMAL_INS WHERE NOT INTAKE_CONDITION != 'Aged' ORDER BY ANIMAL_ID;
+
+-- level 1, 동물의 아이디와 이름
+-- 모든 동물의 아이디와 이름을 ANIMAL_ID순으로 조회
+SELECT ANIMAL_ID, NAME FROM ANIMAL_INS ORDER BY ANIMAL_ID;
+
+
+-- level 1, 여러 기준으로 정렬하기
+-- 아이디와 이름, 보호 시작일을 이름 순으로 조회, 이름이 같은 동물 중에서는 보호를 나중에 시작한 동물
+SELECT ANIMAL_ID, NAME, DATETIME FROM ANIMAL_INS ORDER BY NAME, DATETIME DESC;
+
+
+-- level 1, 상위 n개 레코드
+-- 가장 먼저 들어온 동물의 이름을 조회
+SELECT NAME FROM ANIMAL_INS ORDER BY DATETIME ASC LIMIT 1;
+
+SELECT NAME FROM ANIMAL_INS WHERE DATETIME = (SELECT MIN(DATETIME) FROM ANIMAL_INS);
+
+
+-- level 1, 조건에 맞는 회원수 구하기
+-- 2021년에 가입한 회원 중 나이가 20세 이상 29세 이하인 회원이 몇 명인지 출력
+SELECT COUNT(*) AS USERS FROM USER_INFO WHERE JOINED LIKE '2021%' AND AGE >= 20 AND AGE <= 29;
+SELECT COUNT(*) AS USERS FROM USER_INFO WHERE YEAR(JOINED) = 2021 AND AGE BETWEEN 20 AND 29;
+
+-- level 2, 재구매가 일어난 상품과 회원 리스트 구하기
+-- 동일한 회원이 동일한 상품을 재구매한 데이터를 구하여, 재구매한 회원 ID와 재구매한 상품 ID를 출력하는 SQL문을 작성
+-- 회원 ID를 기준으로 오름차순 정렬 -> 같다면 상품 ID를 기준으로 내림차순 정렬
+
+-- GROUP BY 사용
+SELECT USER_ID, PRODUCT_ID FROM ONLINE_SALE
+GROUP BY USER_ID, PRODUCT_ID HAVING COUNT(*) > 1 ORDER BY USER_ID, PRODUCT_ID DESC;
+
+-- SELF JOIN 사용
+SELECT DISTINCT a.USER_ID, a.PRODUCT_ID
+FROM ONLINE_SALE a JOIN ONLINE_SALE b ON a.USER_ID = b.USER_ID AND a.PRODUCT_ID = b.PRODUCT_ID
+WHERE a.sales_date != b.sales_date
+ORDER BY USER_ID, PRODUCT_ID DESC;
+
+
+-- level 4, 서울에 위치한 식당 목록 출력하기
+-- 서울에 위치한 식당들의 식당 ID, 식당 이름, 음식 종류, 즐겨찾기수, 주소, 리뷰 평균 점수를 조회
+-- 리뷰 평균점수는 소수점 세 번째 자리에서 반올림, 평균점수를 기준으로 내림차순 정렬 -> 즐겨찾기수를 기준으로 내림차순 정렬
+SELECT i.REST_ID, i.REST_NAME, i.FOOD_TYPE, i.FAVORITES, i.ADDRESS, ROUND(AVG(r.REVIEW_SCORE), 2) AS SCORE
+FROM REST_REVIEW r JOIN REST_INFO i ON r.REST_ID = i.REST_ID
+WHERE i.ADDRESS LIKE '서울%'
+GROUP BY i.REST_NAME
+ORDER BY SCORE DESC, i.FAVORITES DESC;
+
+
+-- level 4, 오프라인/온라인 판매 데이터 통합하기
+-- 2022년 3월의 오프라인/온라인 상품 판매 데이터의 판매 날짜, 상품ID, 유저ID, 판매량을 출력하는 SQL문을 작성
+-- OFFLINE_SALE 테이블의 판매 데이터의 USER_ID 값은 NULL 표시
+-- 판매일을 기준으로 오름차순 정렬 -> 같다면 상품 ID를 기준으로 오름차순 -> 같다면 유저 ID를 기준으로 오름차순 정렬
+
+-- DATE_FORMAT(onl.SALES_DATE, ('%Y-%m-%d')) AS SALES_DATE
+(SELECT DATE_FORMAT(SALES_DATE, ('%Y-%m-%d')) AS SALES_DATE, PRODUCT_ID, USER_ID, SALES_AMOUNT
+ FROM ONLINE_SALE WHERE SALES_DATE LIKE '2022-03%')
+UNION ALL
+(SELECT DATE_FORMAT(SALES_DATE, ('%Y-%m-%d')) AS SALES_DATE, PRODUCT_ID, NULL AS USER_ID, SALES_AMOUNT
+ FROM OFFLINE_SALE WHERE SALES_DATE LIKE '2022-03%')
+ORDER BY SALES_DATE, PRODUCT_ID, USER_ID;
+
+-- SALES_DATE LIKE '2022-03%' -> year(SALES_DATE) = 2022 AND month(SALES_DATE) = 3 정답 가능
