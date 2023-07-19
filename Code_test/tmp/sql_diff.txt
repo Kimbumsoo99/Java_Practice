@@ -1,0 +1,3 @@
+-- Oracle과 Mysql에 서로 다른 문법 작성
+MYSQL -> COALESCE
+Oracle -> NVL

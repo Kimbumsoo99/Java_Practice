@@ -1,0 +1,14 @@
+SQL 기초 문법
+SELECT [컬럼명|*] FROM [테이블명] WHERE [조건] GROUP BY [그룹] HAVING [그룹조건] ORDER BY [DESC|ASC];
+
+ASC -> default로 설정
+WHERE, GROUP BY, ORDER BY 등은 생략 가능.
+
+WHERE 조건 종류는 다양
+대소 비교 [ <, <=, >, >=, = ]
+문자 비교 [ =, LIKE ]
+
+AS를 통한 COLUMN 이름 명시
+
+SUM, AVG, MAX, MIN, COUNT 등 가능
+ROUND -> 반올림
