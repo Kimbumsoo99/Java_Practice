@@ -118,4 +118,21 @@ ORDER BY r.CREATED_DATE, b.TITLE;
 -- 평균 일일 대여 요금은 소수 첫 번째 자리에서 반올림, 컬럼명 AVERAGE_FEE 지정
 SELECT ROUND(AVG(DAILY_FEE), 0) AS AVERAGE_FEE FROM CAR_RENTAL_COMPANY_CAR WHERE CAR_TYPE='SUV'; -- 일반적인 반올림
 
+-- level 1, 인기있는 아이스크림
+-- 총주문량을 기준으로 내림차순 정렬 -> 같다면 출하 번호를 기준으로 오름차순 정렬
+SELECT FLAVOR FROM FIRST_HALF ORDER BY TOTAL_ORDER DESC, SHIPMENT_ID ASC;
 
+
+-- level 1, 모든 레코드 조회하기
+-- ANIMAL_ID순으로 조회하는 SQL문
+SELECT * FROM ANIMAL_INS ORDER BY ANIMAL_ID
+
+
+-- level 1, 역순 정렬하기
+-- 모든 동물의 이름과 보호 시작일을 조회, ANIMAL_ID 역순
+SELECT NAME, DATETIME FROM ANIMAL_INS ORDER BY ANIMAL_ID DESC;
+
+
+-- level 1, 아픈 동물 찾기
+-- 아픈 동물1의 아이디와 이름을 조회, 아이디 순으로 조회
+SELECT ANIMAL_ID, NAME FROM ANIMAL_INS WHERE INTAKE_CONDITION='Sick' ORDER BY ANIMAL_ID;
