@@ -62,3 +62,7 @@ from book a join book_sales b on a.book_id=b.book_id
 where b.sales_date like '2022-01%'
 group by category order by 1
 
+
+-- level 2, 고양이와 개는 몇 마리 있을까
+-- 고양이와 개가 각각 몇 마리인지 조회하는 SQL문, 고양이를 개보다 먼저 조회
+SELECT ANIMAL_TYPE, COUNT(*) as count from animal_ins group by 1 order by 1;
