@@ -75,3 +75,53 @@ SELECT ANIMAL_TYPE, COUNT(*) as count from animal_ins group by 1 order by 1;
 SELECT CAR_ID, CASE WHEN SUM(IF('2022-10-16' BETWEEN START_DATE AND END_DATE, 1, 0)) = 0
 then "대여 가능" else "대여중" end AS AVAILBILITY
 FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY GROUP BY CAR_ID ORDER BY CAR_ID DESC;
+
+-- level 2, 동명 동물 수 찾기
+-- 두 번 이상 쓰인 이름과 해당 이름이 쓰인 횟수를 조회
+-- 이름이 없는 동물은 집계에서 제외하며, 결과는 이름 순으로 조회
+SELECT NAME, COUNT(ANIMAL_ID) AS COUNT
+FROM ANIMAL_INS where name is not null
+group by 1 having COUNT >= 2 order by name;
+-- count(*)로 할 경우 where name is not null을 꼭 넣어야 함
+
+SELECT NAME, COUNT(NAME) AS COUNT
+FROM ANIMAL_INS group by 1 having COUNT >= 2 order by name;
+-- count(NAME)으로 할 경우 where name is not null이 없어도 됨.
+
+
+-- level 3, 대여 횟수가 많은 자동차들의 월별 대여 횟수 구하기
+-- 대여 시작일을 기준으로 2022년 8월부터 2022년 10월까지 총 대여 횟수가 5회 이상인 자동차들에 대해서
+-- 해당 기간 동안의 월별 자동차 ID 별 총 대여 횟수(컬럼명: RECORDS) 리스트를 출력하는 SQL문을 작성
+-- 월을 기준으로 오름차순 정렬 -> 같다면 자동차 ID를 기준으로 내림차순 정렬
+-- 월의 총 대여 횟수가 0인 경우에는 결과에서 제외
+SELECT month(start_date) month, car_id, count(*) records
+from CAR_RENTAL_COMPANY_RENTAL_HISTORY
+where start_date >= '2022-08-01' and start_date < '2022-11-01'
+  and car_id in (SELECT car_id
+      from CAR_RENTAL_COMPANY_RENTAL_HISTORY
+      where start_date >= '2022-08-01' and start_date < '2022-11-01'
+      group by car_id
+      having count(car_id) >= 5)
+group by month, car_id
+having records > 0
+order by month, car_id desc;
+
+
+-- level 2, 입양 시각 구하기(1)
+-- 09:00부터 19:59까지, 각 시간대별로 입양이 몇 건이나 발생했는지 조회 시간대 순으로 정렬
+SELECT hour(dateTime) as hour, count(*) from animal_outs
+where hour(dateTime) between 9 and 20 group by hour order by hour;
+
+SELECT  DATE_FORMAT(DATETIME, '%H') AS HOUR,
+       COUNT(*) AS COUNT
+FROM ANIMAL_OUTS
+WHERE DATE_FORMAT(DATETIME, '%H') BETWEEN 9 AND 20
+GROUP BY  DATE_FORMAT(DATETIME, '%H')
+ORDER BY HOUR ASC;
+
+SELECT HOUR(DATETIME) AS HOUR, COUNT(HOUR(DATETIME)) AS COUNT
+FROM ANIMAL_OUTS
+GROUP BY HOUR
+HAVING HOUR > 8 AND HOUR < 20
+ORDER BY HOUR
+
