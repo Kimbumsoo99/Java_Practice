@@ -66,3 +66,12 @@ group by category order by 1
 -- level 2, 고양이와 개는 몇 마리 있을까
 -- 고양이와 개가 각각 몇 마리인지 조회하는 SQL문, 고양이를 개보다 먼저 조회
 SELECT ANIMAL_TYPE, COUNT(*) as count from animal_ins group by 1 order by 1;
+
+
+-- level 3, 자동차 대여 기록에서 대여중 / 대여 가능 여부 구분하기
+-- 2022년 10월 16일에 대여 중인 자동차인 경우 '대여중' 이라고 표시하고, 대여 중이지 않은 자동차인 경우 '대여 가능'을 표시
+-- 컬럼명: AVAILABILITY, 자동차 ID와 AVAILABILITY 리스트를 출력하는 SQL문
+-- 반납 날짜가 2022년 10월 16일인 경우에도 '대여중'으로 표시, 자동차 ID를 기준으로 내림차순 정렬
+SELECT CAR_ID, CASE WHEN SUM(IF('2022-10-16' BETWEEN START_DATE AND END_DATE, 1, 0)) = 0
+then "대여 가능" else "대여중" end AS AVAILBILITY
+FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY GROUP BY CAR_ID ORDER BY CAR_ID DESC;
