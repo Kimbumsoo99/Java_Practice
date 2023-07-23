@@ -20,3 +20,40 @@ SELECT car_id, car_type, daily_fee, options from CAR_RENTAL_COMPANY_CAR
 where options like '%네비게이션%' order by car_id desc;
 -- 또는 정규식!
 
+
+-- level 2, 조건에 부합하는 중고거래 상태 조회하기
+-- 2022년 10월 5일에 등록된 중고거래 게시물의 게시글 ID, 작성자 ID, 게시글 제목, 가격, 거래상태를 조회하는 SQL문
+-- 거래상태가 SALE 이면 판매중, RESERVED이면 예약중, DONE이면 거래완료 분류하여 출력
+SELECT board_id, writer_id, title, price,
+       case when status='DONE' then '거래완료' else
+           case when status='SALE' then '판매중' else '예약중'
+               end
+           end as status
+from used_goods_board where created_date='2022-10-05' order by board_id desc;
+
+SELECT BOARD_ID, WRITER_ID, TITLE, PRICE,
+       CASE
+           WHEN STATUS = 'SALE' THEN '판매중'
+           WHEN STATUS = 'RESERVED' THEN '예약중'
+           WHEN STATUS = 'DONE' THEN '거래완료'
+           ELSE '알 수 없음'
+           END AS STATUS
+FROM USED_GOODS_BOARD
+WHERE created_date = '2022-10-05'
+order by board_id desc
+
+
+
+-- level 1, 자동차 대여 기록에서 장기/단기 대여 구분하기
+-- 2022년 9월에 속하는 대여 기록에 대해서 대여 기간이 30일 이상이면 '장기 대여' 그렇지 않으면 '단기 대여' 로 표시
+-- 컬럼명: RENT_TYPE, 대여 기록 ID를 기준으로 내림차순 정렬, 데이트 포맷과 동일
+SELECT history_id, car_id,
+       date_format(start_date, ('%Y-%m-%d')) as start_date,
+       date_format(end_date, ('%Y-%m-%d')) as end_date,
+       case
+           when datediff(end_date, start_date) + 1 >= 30
+               then '장기 대여'
+           else '단기 대여'
+           end as rent_type
+from CAR_RENTAL_COMPANY_RENTAL_HISTORY where start_date like '2022-09%' order by history_id desc;
+-- 날짜에서는 DATEDIFF 사용하기, 
