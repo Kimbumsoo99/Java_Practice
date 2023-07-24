@@ -56,4 +56,13 @@ SELECT history_id, car_id,
            else '단기 대여'
            end as rent_type
 from CAR_RENTAL_COMPANY_RENTAL_HISTORY where start_date like '2022-09%' order by history_id desc;
--- 날짜에서는 DATEDIFF 사용하기, 
+-- 날짜에서는 DATEDIFF 사용하기
+
+
+-- level 2, 자동차 평균 대여 기간 구하기
+-- 평균 대여 기간이 7일 이상인 자동차들의 자동차 ID와 평균 대여 기간(컬럼명: AVERAGE_DURATION) 리스트를 출력
+-- 평균 대여 기간은 소수점 두번째 자리에서 반올림 
+-- 결과는 평균 대여 기간을 기준으로 내림차순 정렬 -> 같으면 자동차 ID를 기준으로 내림차순 정렬
+SELECT CAR_ID, round(avg(DATEDIFF(end_date, start_date) +1), 1) AS AVERAGE_DURATION 
+from car_rental_company_rental_history group by car_id having avg(DATEDIFF(end_date, start_date) +1) >= 7 
+order by 2 desc, car_id desc;
