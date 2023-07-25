@@ -1,16 +1,24 @@
 package baekjoon.implementations.gold.chicken;
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
-public class Main{
+public class Test {
+
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
     static int[][] Graph;
-//    static boolean[][] visit;
+    //    static boolean[][] visit;
     static int M;
-    static ArrayList<int[]> chickenHouse = new ArrayList<>();
-    static int chickenCnt = 0;
+    static Queue<int[]> chickenHouse = new LinkedList<>();
     static ArrayList<int[]> house = new ArrayList<>();
     static int answer = Integer.MAX_VALUE;
     static void range(){
@@ -28,25 +36,26 @@ public class Main{
         }
         answer = Math.min(answer, sumRange);
     }
-    static void dfs(int chk){
-        System.out.println(chk);
-        if(chk == chickenCnt - M){
+    static void dfs(int start, int start2, int chk){
+//        System.out.println(chk);
+        if(chk == chickenHouse.size() - M){
             range();
             return;
         }
 
-        for (int i = 0; i < chickenCnt; i++) {
-            int tmp[] = chickenHouse.get(i);
-            Graph[tmp[0]][tmp[1]] = 0;
-            System.out.println(tmp[0] + " " + tmp[1]);
-            dfs(chk + 1);
-            Graph[tmp[0]][tmp[1]] = 2;
-
+        for (int i = start; i < Graph.length; i++) {
+            for (int j = 0; j < Graph.length; j++) {
+                if(Graph[i][j] == 2){
+                    Graph[i][j] = 0;
+                    dfs(i, j, chk + 1);
+                    Graph[i][j] = 2;
+                }
+            }
         }
 
-
     }
-    public static void main(String[] args) throws IOException{
+
+    public static void main(String[] args) throws IOException {
         StringTokenizer st;
         st = new StringTokenizer(br.readLine());
         int N = Integer.parseInt(st.nextToken());
@@ -60,16 +69,17 @@ public class Main{
             for(int j=0;j<N;j++){
                 int tmp = Integer.parseInt(st.nextToken());
                 Graph[i][j] = tmp;
-                if(tmp == 2) chickenHouse.add(new int[]{i, j});
+                if(tmp == 2) chickenHouse.offer(new int[]{i, j});
                 else if (tmp == 1) {
                     house.add(new int[]{i, j});
                 }
             }
         }
-        chickenCnt = chickenHouse.size();
 
-        dfs(0);
-        System.out.println(answer);
-        
+        dfs(0, 0, 0);
+        bw.write(answer + "\n");
+        bw.flush();
+        bw.close();
+        br.close();
     }
 }
