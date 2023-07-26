@@ -13,18 +13,15 @@ public class Main {
         for(int i = 65;i<91;i++) answer += String.valueOf((char)i);
         System.out.println(answer.toLowerCase());
         System.out.println(answer);
+//        ArrayDeque<int[]> dq = new ArrayDeque<>();
+//        int[] tmp = {1, 2};
+//        dq.offer(tmp);
+//        System.out.println(dq.contains(new int[]{1, 2}));
+
         ArrayDeque<Integer> dq = new ArrayDeque<>();
-        dq.offer(2);
-        dq.offer(3);
-        dq.offer(4);
-        dq.offer(5);
-        dq.offer(6);
-        System.out.println(dq.poll());
-        System.out.println(dq.pollLast());
-        System.out.println(dq.pollFirst());
-        System.out.println(dq.toString());
-        dq.offerFirst(11);
-        dq.offerLast(21);
-        System.out.println(dq.toString());
+        int tmp = 1;
+        dq.offer(tmp);
+        System.out.println(dq.contains(1));
+
     }
 }

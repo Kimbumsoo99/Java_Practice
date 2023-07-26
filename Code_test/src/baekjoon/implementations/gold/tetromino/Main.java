@@ -18,69 +18,91 @@ public class Main {
     static void tetro(int[] start){
         int y = start[1];
         int x = start[0];
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 19; i++) {
             int sum = Graph[y][x];
-            if(i == 0){
-                sum += Graph[y][x-1];  // 1 1 1 1
-                sum += Graph[y][x+1];
-                sum += Graph[y][x+2];
-            } else if (i == 1) {       // 1
-                sum += Graph[y-1][x];  // 1
-                sum += Graph[y+1][x];  // 1
-                sum += Graph[y+2][x];  // 1
-            } else if (i == 2) {
-                sum += Graph[y+1][x];  // 1 1
-                sum += Graph[y][x+1];  // 1 1
-                sum += Graph[y+1][x+1];
-            } else if (i == 3) {
-                sum += Graph[y-1][x];  // 1
-                sum += Graph[y-2][x];  // 1
-                sum += Graph[y][x+1];  // 1 1
-            } else if (i == 4) {
-                sum += Graph[y-1][x];  //   1
-                sum += Graph[y-2][x];  //   1
-                sum += Graph[y][x-1];  // 1 1
-            } else if (i == 5) {
-                sum += Graph[y][x-1];  // 1 1
-                sum += Graph[y+1][x];  //   1
-                sum += Graph[y+2][x];  //   1
-            } else if (i == 6) {
-                sum += Graph[y+1][x];  // 1 1
-                sum += Graph[y+2][x];  // 1
-                sum += Graph[y][x+1];  // 1
-            } else if (i == 7) {
-                sum += Graph[y-1][x-1];// 1
-                sum += Graph[y][x-1];  // 1 1
-                sum += Graph[y+1][x];  //   1
-            } else if (i == 8) {
-                sum += Graph[y-1][x+1];//   1
-                sum += Graph[y][x+1];  // 1 1
-                sum += Graph[y+1][x];  // 1
-            } else if (i == 9) {
-                sum += Graph[y][x+1];  //   1 1
-                sum += Graph[y-1][x];  // 1 1
-                sum += Graph[y-1][x-1];//
-            } else if (i == 10) {
-                sum += Graph[y][x-1];  //
-                sum += Graph[y+1][x];  // 1 1
-                sum += Graph[y+1][x+1];//   1 1
-            } else if (i == 11) {
-                sum += Graph[y][x-1];  //
-                sum += Graph[y+1][x];  // 1 1 1
-                sum += Graph[y][x+1];  //   1
-            } else if (i == 12) {
-                sum += Graph[y-1][x];  // 1
-                sum += Graph[y][x+1];  // 1 1
-                sum += Graph[y+1][x];  // 1
-            } else if (i == 13) {
-                sum += Graph[y-1][x];  //   1
-                sum += Graph[y][x-1];  // 1 1
-                sum += Graph[y+1][x];  //   1
-            } else if (i == 14) {
-                sum += Graph[y][x-1];  //   1
-                sum += Graph[y+1][x];  // 1 1 1
-                sum += Graph[y][x+1];  //
+            try {
+
+                if (i == 0) {
+                    sum += Graph[y][x - 1];           // 1 1 1 1
+                    sum += Graph[y][x + 1];
+                    sum += Graph[y][x + 2];
+                } else if (i == 1) {                  // 1
+                    sum += Graph[y - 1][x];           // 1
+                    sum += Graph[y + 1][x];           // 1
+                    sum += Graph[y + 2][x];           // 1
+                } else if (i == 2) {
+                    sum += Graph[y + 1][x];           // 1 1
+                    sum += Graph[y][x + 1];           // 1 1
+                    sum += Graph[y + 1][x + 1];
+                } else if (i == 3) {
+                    sum += Graph[y - 1][x];           // 1
+                    sum += Graph[y - 2][x];           // 1
+                    sum += Graph[y][x + 1];           // 1 1
+                } else if (i == 4) {
+                    sum += Graph[y - 1][x];           //   1
+                    sum += Graph[y - 2][x];           //   1
+                    sum += Graph[y][x - 1];           // 1 1
+                } else if (i == 5) {
+                    sum += Graph[y][x - 1];           // 1 1
+                    sum += Graph[y + 1][x];           //   1
+                    sum += Graph[y + 2][x];           //   1
+                } else if (i == 6) {
+                    sum += Graph[y + 1][x];           // 1 1
+                    sum += Graph[y + 2][x];           // 1
+                    sum += Graph[y][x + 1];           // 1
+                } else if (i == 7) {
+                    sum += Graph[y - 1][x - 1];       // 1
+                    sum += Graph[y][x - 1];           // 1 1
+                    sum += Graph[y + 1][x];           //   1
+                } else if (i == 8) {
+                    sum += Graph[y - 1][x + 1];       //   1
+                    sum += Graph[y][x + 1];           // 1 1
+                    sum += Graph[y + 1][x];           // 1
+                } else if (i == 9) {
+                    sum += Graph[y][x + 1];           //   1 1
+                    sum += Graph[y + 1][x];           // 1 1
+                    sum += Graph[y + 1][x - 1];       //
+                } else if (i == 10) {
+                    sum += Graph[y][x - 1];           //
+                    sum += Graph[y + 1][x];           // 1 1
+                    sum += Graph[y + 1][x + 1];       //   1 1
+                } else if (i == 11) {
+                    sum += Graph[y][x - 1];           //
+                    sum += Graph[y + 1][x];           // 1 1 1
+                    sum += Graph[y][x + 1];           //   1
+                } else if (i == 12) {
+                    sum += Graph[y - 1][x];           // 1
+                    sum += Graph[y][x + 1];           // 1 1
+                    sum += Graph[y + 1][x];           // 1
+                } else if (i == 13) {
+                    sum += Graph[y - 1][x];           //   1
+                    sum += Graph[y][x - 1];           // 1 1
+                    sum += Graph[y + 1][x];           //   1
+                } else if (i == 14) {
+                    sum += Graph[y][x - 1];           //   1
+                    sum += Graph[y - 1][x];           // 1 1 1
+                    sum += Graph[y][x + 1];           //
+                } else if (i == 15) {
+                    sum += Graph[y][x - 1];           //
+                    sum += Graph[y][x + 1];           // 1 1 1
+                    sum += Graph[y + 1][x + 1];       //     1
+                } else if (i == 16) {
+                    sum += Graph[y][x - 1];           //     1
+                    sum += Graph[y][x + 1];           // 1 1 1
+                    sum += Graph[y - 1][x + 1];       //
+                } else if (i == 17) {
+                    sum += Graph[y - 1][x - 1];       // 1
+                    sum += Graph[y][x - 1];           // 1 1 1
+                    sum += Graph[y][x + 1];           //
+                } else if (i == 18) {
+                    sum += Graph[y][x + 1];           //
+                    sum += Graph[y][x - 1];           // 1 1 1
+                    sum += Graph[y + 1][x - 1];       // 1
+                }
+            }catch (ArrayIndexOutOfBoundsException e) {
+                continue;
             }
+            answer = Math.max(answer, sum);
         }
     }
     static int[][] Graph;
@@ -98,11 +120,11 @@ public class Main {
                 Graph[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-
         for (int i = 0; i < Y; i++) {
             for (int j = 0; j < X; j++) {
                 tetro(new int[]{j, i});
             }
         }
+        System.out.println(answer);
     }
 }
