@@ -16,11 +16,14 @@ public class StringPr {
 //                System.out.println(tmp);
 //            }
 //        }
+
+
         int[] dd = new int[]{1, 2, 3};
         ArrayList<String> qq = new ArrayList<>();
         qq.add("hit");
         qq.add("hot");
 
         System.out.println(qq.contains("hot"));
+        System.out.println((char) (('Z' + 'A') / 2));
     }
 }

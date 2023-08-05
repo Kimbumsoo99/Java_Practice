@@ -2,45 +2,48 @@ package programmers.dfs.trip;
 import java.util.*;
 
 public class Solution {
-    boolean[] visited;
-    ArrayList<String> allRoute;
+    static boolean[] visit;
+    static ArrayList<String> tripGuide = new ArrayList<>();
 
     public String[] solution(String[][] tickets) {
         String[] answer = {};
-        int cnt = 0;
-        visited = new boolean[tickets.length];
-        allRoute = new ArrayList<>();
+        visit = new boolean[tickets.length];
+        dfs("ICN", "ICN", tickets, 0);
 
-        dfs("ICN", "ICN", tickets, cnt);
 
-        Collections.sort(allRoute);
-        answer = allRoute.get(0).split(" ");
-
+        // for(int i=0;i<tripGuide.size();i++){
+        //     System.out.println(tripGuide.get(i));
+        // }
+        Collections.sort(tripGuide, (o1, o2) -> o1.compareTo(o2));
+        answer = tripGuide.get(0).split(" ");
 
         return answer;
     }
 
-    public void dfs(String start, String route, String[][] tickets, int cnt){
-        if(cnt == tickets.length){
-            System.out.println(route);
-            allRoute.add(route);
+    static void dfs(String current, String route, String[][] tickets, int count){
+        // System.out.println(route);
+        // 종료 조건
+        if(count == tickets.length){
+            tripGuide.add(route);
             return;
         }
 
-        for(int i=0; i<tickets.length; i++){
-            if(start.equals(tickets[i][0]) && !visited[i]){
-                visited[i] = true;
-                dfs(tickets[i][1], route+" "+tickets[i][1], tickets, cnt+1);
-                visited[i] = false;
+        // 탐색
+        for(int i=0;i<tickets.length;i++){
+            if(!visit[i] && tickets[i][0].equals(current)){
+                visit[i] = true;
+                dfs(tickets[i][1], route + " " + tickets[i][1], tickets, count + 1);
+                visit[i] = false;
             }
         }
+
     }
 
     public static void main(String[] args) {
         Solution s = new Solution();
         String[] answer = s.solution(new String[][]{{"ICN", "JFK"},{"HND", "IAD"}, {"JFK", "HND"}});
         for (int i = 0; i < answer.length; i++) {
-            System.out.println(answer[i]);
+            System.out.print(answer[i] + " ");
         }
         System.out.println();
 
@@ -48,7 +51,7 @@ public class Solution {
             new String[][]{{"ICN", "SFO"}, {"ICN", "ATL"}, {"SFO", "ATL"}, {"ATL", "ICN"},
                 {"ATL", "SFO"}});
         for (int i = 0; i < answer2.length; i++) {
-            System.out.println(answer2[i]);
+            System.out.print(answer2[i] + " ");
         }
     }
 }
