@@ -118,3 +118,48 @@ where
     b.views=(select views from used_goods_board order by views desc limit 1)
 order by file_id desc;
 
+
+
+-- level 2, 루시와 엘라 찾기 ⭕
+-- 이름이 Lucy, Ella, Pickle, Rogan, Sabrina, Mitty인 동물의 아이디와 이름, 성별 및 중성화 여부를 조회하는 SQL 문
+-- 아이디 순으로 조회
+SELECT ANIMAL_id, name, sex_upon_intake
+from animal_ins where name in('Lucy','Ella', 'Pickle', 'Rogan', 'Sabrina', 'Mitty') order by 1;
+
+
+-- level 2, 이름에 el이 들어가는 동물 찾기 ⭕
+-- 이름에 "EL"이 들어가는 개의 아이디와 이름을 조회하는 SQL문
+-- 이름 순으로 조회
+SELECT animal_id, name from animal_ins where name like '%el%' and animal_type='Dog' order by name;
+
+
+
+
+-- level 2, 중성화 여부 파악하기 ⭕
+-- 중성화된 동물은 SEX_UPON_INTAKE 컬럼에 'Neutered' 또는 'Spayed'라는 단어가 들어있다.
+-- 중성화가 되어있다면 'O', 아니라면 'X'라고 표시
+SELECT animal_id, name,
+       case when sex_upon_intake like '%Spayed%' or sex_upon_intake like '%Neutered%'
+    then 'O' else 'X' end as 중성화 from animal_ins order by 1;
+-- 정규식 활용
+SELECT ANIMAL_ID, NAME,
+       IF(SEX_UPON_INTAKE REGEXP 'Neutered|Spayed', 'O', 'X') 중성화
+FROM ANIMAL_INS
+ORDER BY ANIMAL_ID;
+
+
+
+
+-- level 2, DATETIME에서 DATE로 형 변환 ⭕
+-- 동물의 아이디와 이름, 들어온 날짜1를 조회하는 SQL문을 작성해주세요. 이때 결과는 아이디 순으로 조회
+SELECT animal_id, name, Date_format(datetime, '%Y-%m-%d') as 날짜 from animal_ins order by 1;
+
+
+
+
+
+
+-- level 2, 카테고리 별 상품 개수 구하기 ❌
+-- 상품 카테고리 코드(PRODUCT_CODE 앞 2자리) 별 상품 개수를 출력
+SELECT LEFT(product_code, 2), COUNT(*) AS PRODUCTs  FROM product GROUP BY 1;
+-- RIGHT() 도 존재함.
