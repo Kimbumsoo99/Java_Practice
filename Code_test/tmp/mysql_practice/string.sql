@@ -66,3 +66,55 @@ from CAR_RENTAL_COMPANY_RENTAL_HISTORY where start_date like '2022-09%' order by
 SELECT CAR_ID, round(avg(DATEDIFF(end_date, start_date) +1), 1) AS AVERAGE_DURATION 
 from car_rental_company_rental_history group by car_id having avg(DATEDIFF(end_date, start_date) +1) >= 7 
 order by 2 desc, car_id desc;
+
+
+
+-- level 3, 대여 기록이 존재하는 자동차 리스트 구하기
+-- CAR_RENTAL_COMPANY_CAR 테이블과 CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블에서 자동차 종류가 '세단'인
+-- 자동차들 중 10월에 대여를 시작한 기록이 있는 자동차 ID 리스트를 출력하는 SQL문을 작성
+-- 자동차 ID 리스트는 중복이 없어야 하며, 자동차 ID를 기준으로 내림차순 정렬
+SELECT distinct (A.CAR_ID) as car_id
+FROM CAR_RENTAL_COMPANY_CAR A
+    join car_rental_company_Rental_history B on a.car_id=b.car_id
+                                     where b.start_date like '%-10-%' and a.car_type = '세단'
+                                     order by car_id desc;
+
+
+
+-- level 4, 취소되지 않은 진료 예약 조회하기 ⭕
+-- PATIENT, DOCTOR 그리고 APPOINTMENT 테이블에서
+-- 2022년 4월 13일 취소되지 않은 흉부외과(CS) 진료 예약 내역을 조회하는 SQL문을 작성
+-- 결과는 진료예약일시를 기준으로 오름차순 정렬
+SELECT a.apnt_no, p.pt_name, p.pt_no, a.mcdp_cd, d.dr_name, a.apnt_ymd
+from appointment a
+    join patient p on a.pt_no=p.pt_no
+    join doctor d on d.dr_id=a.mddr_id
+where a.mcdp_cd='CS' and apnt_ymd like '2022-04-13%' and apnt_cncl_yn='n' order by a.apnt_ymd;
+
+
+
+-- level 3, 조건별로 분류하여 주문상태 출력하기 ❌
+-- FOOD_ORDER 테이블에서 5월 1일을 기준으로 주문 ID, 제품 ID, 출고일자, 출고여부를 조회하는 SQL문
+-- 출고여부는 5월 1일까지 출고완료로 이 후 날짜는 출고 대기로 미정이면 출고미정으로 출력해주시고,
+-- 결과는 주문 ID를 기준으로 오름차순 정렬
+SELECT order_id, product_id, date_format(out_date, '%Y-%m-%d') as out_date,
+case
+WHEN out_date IS NULL THEN '출고미정'
+WHEN DATEDIFF('2022-05-01', out_date) >= 0 THEN '출고완료'
+WHEN DATEDIFF('2022-05-01', out_date) < 0 THEN '출고대기'
+    END AS 출고여부
+from food_order order by 1;
+
+
+
+-- level 3, 조회수가 가장 많은 중고거래 게시판의 첨부파일 조회하기 ❌ (CONCAT 처음 봤음)
+-- USED_GOODS_BOARD와 USED_GOODS_FILE 테이블에서 조회수가 가장 높은 중고거래 게시물에 대한 첨부파일 경로를 조회하는 SQL문
+-- 첨부파일 경로는 FILE ID를 기준으로 내림차순 정렬해주세요. 기본적인 파일경로는 /home/grep/src/
+-- 게시글 ID를 기준으로 디렉토리가 구분되고, 파일이름은 파일 ID, 파일 이름, 파일 확장자로 구성되도록 출력해주세요.
+-- 조회수가 가장 높은 게시물은 하나만 존재
+SELECT CONCAT('/home/grep/src/', b.board_id, '/', file_id, file_name, f.file_ext) AS FILE_PATH
+from used_goods_board b join used_goods_file f on b.board_id=f.board_id
+where
+    b.views=(select views from used_goods_board order by views desc limit 1)
+order by file_id desc;
+
