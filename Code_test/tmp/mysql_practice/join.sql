@@ -67,3 +67,23 @@ where i.animal_id is null order by 1;
 
 
 
+-- level 3, 있었는데요 없었습니다 ❌(datediff는 시간 비교가 안됨) timediff 사용해야함
+-- 입양일이 잘못 입력됨, 시작일보다 입양일이 더 빠른 동물의 아이디와 이름을 조회
+-- 보호 시작일이 빠른 순으로 조회
+SELECT i.animal_id, i.name from animal_ins i join animal_outs o on i.animal_id=o.animal_id
+                           where i.datetime > o.datetime order by i.datetime;
+
+
+-- level 3, 오랜 기간 보호한 동물(1) ❌
+-- 아직 입양을 못 간 동물 중, 가장 오래 보호소에 있었던 동물 3마리의 이름과 보호 시작일을 조회
+-- 보호 시작일 순으로 조회
+SELECT i.name, i.datetime
+from animal_ins i left join animal_outs o on i.animal_id=o.animal_id
+where o.name is null and i.name is not null order by i.datetime limit 3;
+
+-- 다른 답안
+SELECT NAME, DATETIME
+FROM ANIMAL_INS
+WHERE ANIMAL_ID NOT IN (SELECT ANIMAL_ID
+                        FROM ANIMAL_OUTS)
+ORDER BY DATETIME LIMIT 3
