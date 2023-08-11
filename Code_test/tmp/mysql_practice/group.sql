@@ -138,3 +138,60 @@ FROM PRODUCT
 GROUP BY TRUNCATE(PRICE,-4)
 ORDER BY PRICE_GROUP
 -- TRUNCATE 버림, ROUND 평균
+
+
+
+-- level 4, 저자 별 카테고리 별 매출액 집계하기 ❌ (풀 수 있었음)
+-- 2022년 1월, 저자 별, 카테고리 별 매출액
+-- 저자 ID를 오름차순으로, 저자 ID가 같다면 카테고리를 내림차순 정렬
+SELECT a.author_id, a.author_name, b.category, sum(s.sales * b.price) as total_sales
+from
+    book_sales s
+        join book b on s.book_id=b.book_id
+        join author a on b.author_id=a.author_id
+where s.sales_date like '2022-01%' group by a.author_name, b.category order by 1, 3 desc;
+
+
+
+-- level 4,식품분류별 가장 비싼 식품의 정보 조회하기 ⭕
+-- 식품분류별, 가격이 제일 비싼 식품의 분류, 가격, 이름을 조회
+-- 이때 식품분류가 '과자', '국', '김치', '식용유'인 경우만 출력, 식품 가격을 기준으로 내림차순 정렬
+SELECT category, price as max_price, product_name
+from food_product
+where price
+          in (select max(price) from food_product group by category)
+  and category in ('과자', '국', '김치', '식용유')
+order by 2 desc;
+
+-- level 4, 년, 월, 성별 별 상품 구매 회원 수 구하기 ❌
+-- 년, 월, 성별 별로 상품을 구매한 회원수를 집계
+-- 년, 월, 성별을 기준으로 오름차순 정렬, 이때, 성별 정보가 없는 경우 결과에서 제외
+SELECT YEAR(O.SALES_DATE) AS YEAR, MONTH(O.SALES_DATE) AS MONTH, U.GENDER, COUNT(DISTINCT O.USER_ID) AS USERS
+FROM ONLINE_SALE O
+    JOIN USER_INFO U ON O.USER_ID = U.USER_ID
+WHERE U.GENDER IS NOT NULL
+GROUP BY 1,2,3
+ORDER BY 1,2,3
+
+
+
+-- level 4, 입양 시각 구하기(2) ❌ (포기)
+-- 몇 시에 입양이 가장 활발하게 일어나는지 0시부터 23시까지, 각 시간대별로 입양이 몇 건이나 발생했는지 조회
+-- 결과는 시간대 순으로 정렬
+SET @HOUR = -1;
+SELECT (@HOUR := @HOUR +1) AS HOUR,
+    (SELECT COUNT(HOUR(DATETIME))
+    FROM ANIMAL_OUTS
+    WHERE HOUR(DATETIME)=@HOUR) AS COUNT
+FROM ANIMAL_OUTS
+WHERE @HOUR < 23;
+-- 이 문제에서는 SET 명령어를 사용
+-- SET은 어떤 변수에 특정 값을 할당할때 쓰는 명령어
+-- ❗주의를 해야 한다. SET 사용시 대입 연산자를 '='를 사용하고 그 외에는 := 를 사용
+SET @HOUR = -1;
+SELECT (@HOUR := @HOUR +1) AS HOUR
+FROM ANIMAL_OUTS
+WHERE @HOUR < 23;
+
+-- 틀린 코드 hour값이 존재하지 않는 경우에 count에 걸리지 않음
+SELECT hour(datetime), count(datetime) from animal_outs group by 1 order by 1;

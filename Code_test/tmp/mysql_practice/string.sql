@@ -163,3 +163,60 @@ SELECT animal_id, name, Date_format(datetime, '%Y-%m-%d') as 날짜 from animal_
 -- 상품 카테고리 코드(PRODUCT_CODE 앞 2자리) 별 상품 개수를 출력
 SELECT LEFT(product_code, 2), COUNT(*) AS PRODUCTs  FROM product GROUP BY 1;
 -- RIGHT() 도 존재함.
+
+
+
+
+-- level 3, 조건에 맞는 사용자 정보 조회하기 ⭕
+-- 중고 거래 게시물을 3건 이상 등록한 사용자의 사용자 ID, 닉네임, 전체주소, 전화번호를 조회하는 SQL문을 작성
+-- 시, 도로명 주소, 상세 주소가 함께 출력, 전화번호의 경우 xxx-xxxx-xxxx 같은 형태
+-- 회원 ID를 기준으로 내림차순 정렬
+SELECT u.user_id, u.nickname,
+       concat(u.city, ' ', u.street_address1, ' ', u.street_address2) as 전체주소,
+       concat(left(u.tlno, 3), '-', mid(u.tlno,4, 4), '-', right(u.tlno,4)) as 전화번호
+from used_goods_board as b join used_goods_user as u on b.writer_id=u.user_id
+group by writer_id having count(writer_id) >=3 order by 1 desc;
+
+-- 다른 정답 concat_ws와 substr 사용
+SELECT
+    u2.user_id,
+    u2.nickname,
+    CONCAT_WS(' ', u2.city, u2.street_address1, u2.street_address2) 전체주소,
+    CONCAT_WS('-',
+              SUBSTR(u2.tlno, 1, 3),
+              SUBSTR(u2.tlno, 4, LENGTH(u2.tlno) - 7),
+              SUBSTR(u2.tlno, -4, 4)) 전화번호
+FROM used_goods_board u1
+         JOIN used_goods_user u2
+              ON u1.writer_id = u2.user_id
+GROUP BY u2.user_id
+HAVING count(u1.writer_id) >= 3
+ORDER BY u2.user_id desc;
+
+
+
+-- level 3, 오랜 기간 보호한 동물(2) ❌
+-- 입양을 간 동물 중, 보호 기간이 가장 길었던 동물 두 마리의 아이디와 이름을 조회하는 SQL문을 작성
+-- 보호 기간이 긴 순으로 조회
+SELECT a.animal_id, a.name from animal_ins a
+    join animal_outs b on a.ANIMAL_ID=b.ANIMAL_ID
+                           order by DATEDIFF(a.DATETIME, b.DATETIME) limit 2;
+
+
+
+-- level 4, 자동차 대여 기록 별 대여 금액 구하기 ❌(포기)
+SELECT HISTORY_ID,
+       ROUND(DAILY_FEE*(DATEDIFF(END_DATE, START_DATE)+1)
+                 *(100-IF(DISCOUNT_RATE IS NULL, 0, DISCOUNT_RATE))/100) AS FEE
+FROM CAR_RENTAL_COMPANY_CAR AS A
+         JOIN CAR_RENTAL_COMPANY_RENTAL_HISTORY AS B
+              ON A.CAR_ID = B.CAR_ID
+         LEFT OUTER JOIN CAR_RENTAL_COMPANY_DISCOUNT_PLAN AS C
+                         ON A.CAR_TYPE = C.CAR_TYPE
+                             AND C.DURATION_TYPE = (CASE WHEN DATEDIFF(END_DATE,START_DATE)+1>='90' THEN '90일 이상'
+                                                         WHEN DATEDIFF(END_DATE,START_DATE)+1>='30' THEN '30일 이상'
+                                                         WHEN DATEDIFF(END_DATE,START_DATE)+1>='7' THEN '7일 이상'
+                                                         ELSE NULL END)
+WHERE 1=1
+  AND A.CAR_TYPE = '트럭'
+ORDER BY FEE DESC, B.HISTORY_ID DESC;

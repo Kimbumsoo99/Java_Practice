@@ -26,4 +26,36 @@ FROM BOOK A JOIN AUTHOR B on a.author_id=b.author_id WHERE CATEGORY = '경제' O
 SELECT A.PRODUCT_CODE, A.PRICE * SUM(B.SALES_AMOUNT) AS SALES
 FROM PRODUCT AS A JOIN OFFLINE_SALE AS B ON A.PRODUCT_ID = B.PRODUCT_ID
 GROUP BY A.PRODUCT_CODE
-ORDER BY SALES DESC,A.PRODUCT_CODE ASC
+ORDER BY SALES DESC,A.PRODUCT_CODE ASC;
+
+
+-- level 4, 그룹별 조건에 맞는 식당 목록 출력하기 ❌
+-- MEMBER_PROFILE와 REST_REVIEW 테이블에서 리뷰를 가장 많이 작성한 회원의 리뷰들을 조회
+-- 매출액을 기준으로 내림차순 정렬해주시고 매출액이 같다면 상품코드를 기준으로 오름차순 정렬
+SELECT m.member_name, r.review_text, DATE_FORMAT(r.review_date, '%Y-%m-%d')
+from member_profile m
+    join rest_review r on m.member_id=r.member_id
+where
+    m.member_id = (
+select member_id from rest_review group by member_id order by count(*) desc limit 1
+)
+order by 3, 2;
+
+
+-- level 4, 주문량이 많은 아이스크림들 조회하기 ⭕ (-- sum(f.TOTAL_ORDER+j.total_order) 이 부분 조심)
+-- 7월 아이스크림 총 주문량과 상반기의 아이스크림 총 주문량을 더한 값이 큰 순서대로 상위 3개의 맛을 조회
+SELECT f.flavor from
+                    first_half f join july j on f.flavor=j.flavor
+                group by 1
+                order by sum(f.TOTAL_ORDER+j.total_order) desc limit 3;
+
+
+-- level 4, 5월 식품들의 총매출 조회하기 ⭕
+-- 2022년 5월인 식품, 총매출을 기준으로 내림차순 정렬해주시고 총매출이 같다면 식품 ID를 기준으로 오름차순 정렬
+SELECT p.product_id, p.product_name, sum(p.price*o.amount) as total_sales
+from food_product p join food_order o on p.product_id=o.product_id
+where o.produce_date like '2022-05%'
+group by 1
+order by 3 desc, 1;
+
+
