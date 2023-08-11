@@ -87,3 +87,28 @@ FROM ANIMAL_INS
 WHERE ANIMAL_ID NOT IN (SELECT ANIMAL_ID
                         FROM ANIMAL_OUTS)
 ORDER BY DATETIME LIMIT 3
+
+
+
+-- level 4, 보호소에서 중성화한 동물 ⭕
+-- 보호소에 들어올 당시에는 중성화1되지 않았지만, 보호소를 나갈 당시에는 중성화된 동물의 아이디와 생물 종, 이름을 조회
+-- 아이디 순으로 조회
+SELECT i.animal_id, i.animal_type, i.name
+from animal_ins i join animal_outs o on i.animal_id=o.animal_id
+where i.sex_upon_intake like '%intact%' and not o.SEX_UPON_OUTCOME like '%intact%'
+order by 1;
+
+
+-- level 5, 상품을 구매한 회원 비율 구하기 ❌
+-- 2021년에 가입한 전체 회원들 중 상품을 구매한 회원수와
+-- 상품을 구매한 회원의 비율(=2021년에 가입한 회원 중 상품을 구매한 회원수 / 2021년에 가입한 전체 회원 수)을
+-- 년, 월 별로 출력하는 SQL문
+-- 회원의 비율은 소수점 두번째자리에서 반올림, 년을 기준으로 오름차순 정렬해주시고 년이 같다면 월을 기준으로 오름차순 정렬
+SELECT YEAR(o.sales_date) as year,
+    month(o.sales_date) as month,
+    count(distinct o.USER_ID) as puchased_users,
+    round(count(distinct o.user_id) / (SELECT COUNT(USER_ID) FROM USER_INFO WHERE YEAR(JOINED) = 2021), 1) as puchased_ratio
+from user_info i join online_sale o on i.user_id=o.user_id
+where i.joined like '2021%'
+group by 1, 2
+order by 1, 2;
