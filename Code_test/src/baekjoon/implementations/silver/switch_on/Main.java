@@ -7,18 +7,14 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int[][] switchBtn;
-    static int N;
+    static int[] switchBtn;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
-        StringBuilder sb = new StringBuilder();
-        int row = N / 20;
-        int col = N % 20;
-        switchBtn = new int[row][col];
+        int N = Integer.parseInt(br.readLine());
+        switchBtn = new int[N];
         StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 0; i < N; i++) {
-            switchBtn[i / 20][i % 20] = Integer.parseInt(st.nextToken());
+            switchBtn[i] = Integer.parseInt(st.nextToken());
         }
         int T = Integer.parseInt(br.readLine());
         for (int i = 0; i < T; i++) {
@@ -26,22 +22,41 @@ public class Main {
             int sex = Integer.parseInt(st.nextToken());
             int location = Integer.parseInt(st.nextToken());
             if (sex == 1) {
-                // 남자
-                manSolution(location);
+                manSolution(location, N);
             }else {
-
+                womenSolution(location - 1, N);
             }
         }
-    }
-    static void manSolution(int l){
-        int idx = l;
-        for (int i = 1; idx < N; i++) {
-            switchBtn[idx / 20][idx % 20] = switchBtn[idx / 20][idx % 20] == 0 ? 1 : 0;
-            idx = l * i;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < switchBtn.length; i++) {
+            if (i % 20 == 0 && i != 0) {
+                sb.append("\n");
+            }
+            sb.append(switchBtn[i]).append(" ");
         }
-
+        System.out.println(sb);
     }
-    static void womenSolution(int l){
 
+    static void draw(){
+        for (int i = 0; i < switchBtn.length; i++) {
+            System.out.print(switchBtn[i] + " ");
+        }
+    }
+    static void manSolution(int l, int N){
+        int num = l;
+        for (int i = 1; l * i <= N; i++) {
+            num = l * i;
+            switchBtn[num - 1] = switchBtn[num - 1] == 0 ? 1 : 0;
+        }
+    }
+    static void womenSolution(int l, int N){
+        switchBtn[l] = switchBtn[l] == 0 ? 1 : 0;
+        int idx = 1;
+        while (l - idx >= 0 && l + idx < N && switchBtn[l - idx] == switchBtn[l + idx]) {
+            switchBtn[l - idx] = switchBtn[l - idx] == 0 ? 1 : 0;
+            switchBtn[l + idx] = switchBtn[l + idx] == 0 ? 1 : 0;
+            idx++;
+        }
     }
 }
