@@ -33,26 +33,28 @@ public class Main {
         for (int tmp[] : list) {
             int shortRange = 0;
             if (tmp[0] == start[0]) { // 같은 동서남북
-                System.out.println("같은 위치");
-                shortRange = Math.abs(tmp[1] - start[1] + tmp[2] - start[2]);
-            } else if (Math.abs(tmp[0] - start[0]) > 2) { // 건너 편
-                System.out.println("바로 옆");
-                shortRange = Math.abs(tmp[1] - start[1] + tmp[2] - start[2]);
-            } else { // 그 외 -> 바로 옆
-                System.out.println("건너편");
-                shortRange = Math.abs(tmp[1] - start[1] + tmp[2] - start[2]);
+//                System.out.println("같은 위치");
+                shortRange = Math.abs(Math.abs(tmp[1] - start[1]) + Math.abs(tmp[2] - start[2]));
+            } else if (Math.abs(tmp[0] - start[0]) == 1 && !((tmp[0] == 2 && start[0] == 3)
+                || (tmp[0] == 3 && start[0] == 2))) { // 건너 편
+//                System.out.println("건너 편");
+//                System.out.println(tmp[1] + " " + start[1] + " " + tmp[2] + " " + start[2]);
+                shortRange = Math.abs(Math.abs(tmp[1] - start[1]) + Math.abs(tmp[2] - start[2]));
                 if (tmp[0] == 1 || tmp[0] == 2) {
                     shortRange += Math.min(Math.min(tmp[1], start[1]) * 2,
-                        Math.max(tmp[1], start[1]) * 2);
+                        Math.min(X - tmp[1], X - start[1]) * 2);
                 } else {
                     shortRange += Math.min(Math.min(tmp[2], start[2]) * 2,
-                        Math.max(tmp[2], start[2]) * 2);
+                        Math.min(Y - tmp[2], Y - start[2]) * 2);
                 }
+            } else { // 그 외 -> 바로 옆
+//                System.out.println("바로 옆");
+                shortRange = Math.abs(Math.abs(tmp[1] - start[1]) + Math.abs(tmp[2] - start[2]));
             }
-            System.out.println("shortRange = " + shortRange);
+//            System.out.println("shortRange = " + shortRange);
             answer += shortRange;
         }
-        System.out.println("answer = " + answer);
+        System.out.println(answer);
     }
     static int[] directionMap(int d, int X, int Y, int rightDown) {
         if (d == 1) {
