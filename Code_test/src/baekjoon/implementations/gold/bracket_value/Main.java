@@ -8,32 +8,32 @@ import java.util.*;
 public class Main {
     static Stack<Character> stack = new Stack<>();
     static Stack<Integer> number = new Stack<>();
-    static HashMap<Character, Integer> dict = new HashMap<>();
+    static HashMap<Character, Integer> open = new HashMap<>();
     static HashMap<Character, Character> close = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String str = br.readLine();
-        dict.put('(', 2);
-        dict.put('[', 3);
+        open.put('(', 2);
+        open.put('[', 3);
         close.put(')', '(');
         close.put(']', '[');
         for (int i = 0; i < str.length(); i++) {
             Character e = str.charAt(i);
 //            System.out.println(i + 1 + " " + number.toString() + " " + stack.toString() + " Element:" + e);
-            if (dict.containsKey(e)) {
+            if (open.containsKey(e)) {
                 stack.push(e);
-            } else if (close.containsKey(e)) {
+            } else if (close.containsKey(e)) { // 닫는 괄호
                 if (stack.isEmpty()) {
                     exitProgram(0);
-                } else if (stack.peek() == 'N') {
+                } else if (stack.peek() == 'N') { // 닫는 괄호이후 숫자가 나왔다면,
                     int tmp = number.pop();
                     stack.pop(); // 'N'을 팝
                     if (stack.isEmpty()) {
                         exitProgram(0);
-                    } else if (close.get(e) == stack.peek()) {
+                    } else if (close.get(e) == stack.peek()) { // 괄호가 맞는다면, 숫자를 곱한다.
                         Character ch = stack.pop(); // '('를 팝
-                        tmp = tmp * dict.get(ch);
+                        tmp = tmp * open.get(ch);
                         while (!stack.isEmpty() && stack.peek() == 'N') {
                             tmp = tmp + number.pop();
                             stack.pop();
@@ -45,7 +45,7 @@ public class Main {
                     }
                 } else if (stack.peek() == close.get(e)) {
                     Character tmp = stack.pop();
-                    int num = dict.get(tmp);
+                    int num = open.get(tmp);
                     while (!stack.isEmpty() && stack.peek() == 'N') {
                         num += number.pop();
                         stack.pop();
@@ -66,7 +66,7 @@ public class Main {
         while (!stack.isEmpty()) {
             if (stack.peek() == 'N') {
                 stack.pop();
-            } else if (dict.containsKey(stack.peek())) {
+            } else if (open.containsKey(stack.peek())) {
                 exitProgram(0);
             }
         }
