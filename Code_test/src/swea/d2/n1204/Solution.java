@@ -1,16 +1,9 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+package swea.d2.n1204;
 
 import java.util.Scanner;
-import java.io.FileInputStream;
 import java.util.*;
 
-class Main
+class Solution
 {
     public static void main(String args[]) throws Exception
     {
@@ -22,24 +15,22 @@ class Main
         {
             HashMap<Integer, Integer> countMap = new HashMap<>();
             int testCase = sc.nextInt();
-            System.out.println("testCase : " + testCase);
             int maxCount = 0;
             for(int i=0;i<1000;i++){
                 int score = sc.nextInt();
                 countMap.put(score, countMap.getOrDefault(score, 0) + 1);
                 if(maxCount < countMap.get(score)) {
                     maxCount = countMap.get(score);
-                    System.out.println(countMap.get(score) + " " + score);
                 }
             }
             ArrayList<Integer> list = new ArrayList<>();
             Iterator<Integer> it = countMap.keySet().iterator();
             while(it.hasNext()){
                 int tmp = it.next();
-                if(maxCount == countMap.get(maxCount)) list.add(tmp);
+                if(maxCount == countMap.get(tmp)) list.add(tmp);
             }
             Collections.sort(list, Collections.reverseOrder());
-            System.out.printf("#%d %d", testCase, list.get(0));
+            System.out.printf("#%d %d%n", testCase, list.get(0));
 
         }
     }
