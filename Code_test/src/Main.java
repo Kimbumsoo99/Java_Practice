@@ -25,5 +25,10 @@ class Main
         list.add(2);
         list.set(0, 3);
         System.out.println(list.get(0) + " " + list.get(2));
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
