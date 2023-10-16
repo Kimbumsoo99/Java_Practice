@@ -14,21 +14,8 @@ class Main
 {
     public static void main(String args[]) throws Exception
     {
-        ArrayList<Integer> list = new ArrayList<>();
-        list.add(2);
-        list.add(2);
-        list.add(2);
-        list.add(2);
-        list.add(2);
-        list.add(2);
-        list.add(2);
-        list.add(2);
-        list.set(0, 3);
-        System.out.println(list.get(0) + " " + list.get(2));
-        try {
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (int i = 0, j = 0; i < 100; i++, j++) {
+            System.out.println(i + " " + j);
         }
     }
 }
