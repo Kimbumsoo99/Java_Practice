@@ -4,12 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
 // 최단경로, 골드 IV
-public class Main {
+public class Fail {
     static int[][] Graph;
     static boolean[] visit;
     static int[] answer;
