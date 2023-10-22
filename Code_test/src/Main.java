@@ -14,8 +14,6 @@ class Main
 {
     public static void main(String args[]) throws Exception
     {
-        for (int i = 0, j = 0; i < 100; i++, j++) {
-            System.out.println(i + " " + j);
-        }
+        System.out.println(Integer.compare(8, 7));
     }
 }
