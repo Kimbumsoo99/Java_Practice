@@ -15,8 +15,8 @@ public class Main2 {
         int[] dp = new int[N + 1];
         int max = 0;
         StringTokenizer st;
+        st = new StringTokenizer(br.readLine());
         for (int i = 1; i < N + 1; i++) {
-            st = new StringTokenizer(br.readLine());
             T[i] = Integer.parseInt(st.nextToken());
             P[i] = Integer.parseInt(st.nextToken());
         }
