@@ -14,6 +14,6 @@ class Main
 {
     public static void main(String args[]) throws Exception
     {
-        System.out.println(Integer.compare(8, 7));
+        System.out.println(((int) (Math.random() * 4)));
     }
 }
