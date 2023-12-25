@@ -1,3 +1,5 @@
+package programmers.implementation.little_str;
+
 import java.util.*;
 class Solution {
     static ArrayList<Long> list = new ArrayList<>();
