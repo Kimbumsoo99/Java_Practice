@@ -1,5 +1,9 @@
 package baekjoon.greedy.s2847;
+<<<<<<< HEAD
 
+=======
+// Java_Coding_Test_Practice 1227
+>>>>>>> origin/main
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
