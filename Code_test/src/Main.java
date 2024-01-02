@@ -1,19 +1,22 @@
-import java.util.ArrayList;
-import java.util.Collections;
-
 class Main
 {
     public static void main(String args[]) throws Exception
     {
-        ArrayList<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(5);
-        list.add(3);
-        Collections.sort(list,(o1, o2) -> {
-            System.out.println(o1 + " " + o2 + " " + (o1 - o2));
-            return o1 - o2;
-        });
-        System.out.println(list.get(0));
-        System.out.println("Donghyuk".compareTo("ss"));
+        System.out.println("one" == "one"); // true
+        String aa = "one";
+        String bb = "one";
+        String cc = new String("one");
+        System.out.println(aa == bb);   // true
+        System.out.println(aa == cc); // false
+        System.out.println(aa.equals(cc)); // true
+
+        switch (3){ // 1,2,3 전부 나온다.
+            case 3:
+                System.out.println(1);
+            case 4:
+                System.out.println(2);
+            default:
+                System.out.println(3);
+        }
     }
 }
