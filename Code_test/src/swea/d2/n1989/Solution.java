@@ -1,4 +1,4 @@
-package swea.d3.n1989;
+package swea.d2.n1989;
 
 import java.util.Scanner;
 class Solution {
