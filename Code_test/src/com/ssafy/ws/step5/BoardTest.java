@@ -10,9 +10,8 @@ public class BoardTest {
 	static int commentSeq = 0;
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
-		UserManager userManager = new UserManager();
-		ArticleManager articleManager = new ArticleManager();
-		CommentManager commentManager = new CommentManager();
+		IUserManager userManager = UserManagerImpl.getInstance();
+		IArticleManager articleManager = ArticleManagerImpl.getInstance();
 		User user1 = new User(userSeq++, "ssafy", "1234", "김싸피", "김싸피", "ssafy@ssafy.com");
 		User user2 = new User(userSeq++, "hong", "123", "홍싸피", "ssafy.hong", "hong@ssafy.com");
 		User user3 = new User(userSeq++, "samsic", "samsic", "김삼식", "삼식이", "kim@ssafy.com");
@@ -45,8 +44,8 @@ public class BoardTest {
 		System.out.println("------------------------------------");
 		Comment cm1 = new Comment(commentSeq++, 1, 4, "잘 보았습니다.");
 		Comment cm2 = new Comment(commentSeq++, 1, 5, "좋은 글 입니다~~");
-		commentManager.addComment(cm1);
-		commentManager.addComment(cm2);
+		articleManager.addComment(cm1);
+		articleManager.addComment(cm2);
 		while(true) {
 			if(loginUser) {
 				int mode = mainPrint(sc, articleManager);
@@ -54,7 +53,7 @@ public class BoardTest {
 					writeBoard(sc, articleManager);
 				}else if(mode == 2) {
 					int boardId = choiceBoardNum(sc, articleManager);
-					detailBoard(boardId, sc, userManager, articleManager, commentManager);
+					detailBoard(boardId, sc, userManager, articleManager);
 				}else if(mode == 3) {
 					logout(userManager);
 				}else {
@@ -78,7 +77,7 @@ public class BoardTest {
 			}
 		}
 	}
-	static int mainPrint(Scanner sc, ArticleManager am) {
+	static int mainPrint(Scanner sc, IArticleManager am) {
 		System.out.println("게시글 목록");
 		Article[] printBoard = am.getArticleList();
 		for (Article article : printBoard) {
@@ -94,7 +93,7 @@ public class BoardTest {
 		return next;
 	}
 	
-	static void textBoard(ArticleManager am) {
+	static void textBoard(IArticleManager am) {
 		System.out.println("텍스트 게시글 모아보기");
 		Article[] articles = am.getTextArticleList();
 		for (int i = 0; i < articles.length; i++) {
@@ -103,7 +102,7 @@ public class BoardTest {
 		System.out.println("------------------------------------");
 	}
 	
-	static void imageBoard(ArticleManager am) {
+	static void imageBoard(IArticleManager am) {
 		System.out.println("이미지 게시글 모아보기");
 		ImageArticle[] articles = am.getImageArticleList();
 		for (int i = 0; i < articles.length; i++) {
@@ -113,7 +112,7 @@ public class BoardTest {
 		System.out.println("전체 이미지의 평균 크기 : " + am.getImageSizeAvg());
 		System.out.println("------------------------------------");
 	}
-	static void searchPrint(Scanner sc,ArticleManager am) {
+	static void searchPrint(Scanner sc,IArticleManager am) {
 		System.out.println("검색 옵션");
 		System.out.println("1. 제목검색");
 		System.out.println("2. 내용검색");
@@ -142,7 +141,7 @@ public class BoardTest {
 		System.out.println("내용 입력");
 		return sc.next();
 	}
-	static void detailBoard(int articleId, Scanner sc, UserManager um, ArticleManager am, CommentManager cm) {
+	static void detailBoard(int articleId, Scanner sc, IUserManager um, IArticleManager am) {
 		Article at = am.getArticle(articleId);
 		at.setViewCnt(at.getViewCnt() + 1);
 		System.out.println("제목 : " + at.getTitle());
@@ -151,7 +150,7 @@ public class BoardTest {
 		System.out.println("작성일 : " + at.getRegDate());
 		System.out.println("내용 : " + at.getContent());
 		System.out.println("------------------------------------");
-		Comment[] commentList = cm.getCommentList(articleId);
+		Comment[] commentList = am.getCommentList(articleId);
 		System.out.println("총 댓글의 수 : " + commentList.length);
 		for (Comment comment : commentList) {
 			System.out.println(comment.getCommentId() + ". " + comment.getContent() + " 작성자 : " + um.getUser(comment.getUserSeq()).getNickName());
@@ -167,6 +166,7 @@ public class BoardTest {
 			if(mode == 1) {
 				if(am.getArticle(articleId).getUserSeq() == user.getUserSeq()) {
 					am.removeArticle(articleId);
+					return;
 				}else {
 					System.out.println("게시글 삭제는 작성자만 할 수 있습니다.");
 				}
@@ -178,25 +178,25 @@ public class BoardTest {
 				System.out.println("댓글을 작성해주세요.");
 				String userCmStr = sc.nextLine();
 				Comment userComment = new Comment(commentSeq++, articleId, user.getUserSeq(), userCmStr);
-				cm.addComment(userComment);
+				am.addComment(userComment);
 				System.out.println("------------------------------------");
-				detailBoard(articleId, sc, um, am, cm);
+				detailBoard(articleId, sc, um, am);
 				return;
 			}else if(mode == 3) {
 				System.out.println("지우려는 댓글의 번호를 입력해주세요.");
 				int cmNum = sc.nextInt();
-				if(cm.getComment(cmNum) == null) {
+				if(am.getComment(cmNum) == null) {
 					System.out.println("선택하신 댓글이 존재하지 않습니다.");
 				}
 				// 본인만 지울 수 있는 로직 추가
-				Comment getComment = cm.getComment(cmNum);
+				Comment getComment = am.getComment(cmNum);
 				if(getComment.getUserSeq() == user.getUserSeq()) {
-					cm.removeComment(cmNum);
+					am.removeComment(cmNum);
 				}else {
 					System.out.println("게시글 삭제는 작성자만 할 수 있습니다.");
 				}
 				System.out.println("------------------------------------");
-				detailBoard(articleId, sc, um, am, cm);
+				detailBoard(articleId, sc, um, am);
 				return;
 			}else {
 				System.out.println("메인 화면으로 돌아갑니다.");
@@ -205,12 +205,12 @@ public class BoardTest {
 			}
 		}
 	}
-	static int choiceBoardNum(Scanner sc, ArticleManager am) {
+	static int choiceBoardNum(Scanner sc, IArticleManager am) {
 		System.out.println("게시글 선택 : ");
 		int articleId = sc.nextInt();
 		return articleId;
 	}
-	static void writeBoard(Scanner sc, ArticleManager am) {
+	static void writeBoard(Scanner sc, IArticleManager am) {
 		sc.nextLine();
 		System.out.print("제목 : ");
 		String title = sc.nextLine();
@@ -219,7 +219,7 @@ public class BoardTest {
 		Article createArticle = new Article(articleSeq++, title, content,user.getUserSeq());
 		am.addArticle(createArticle);
 	}
-	static void logout(UserManager um) {
+	static void logout(IUserManager um) {
 		um.logout();
 		user = null;
 		loginUser = false;
@@ -237,7 +237,7 @@ public class BoardTest {
 		int next = sc.nextInt();
 		return next;
 	}
-	static void login(Scanner sc, UserManager um) {
+	static void login(Scanner sc, IUserManager um) {
 		System.out.println("ID 입력 :");
 		String id = sc.next();
 		System.out.println("PASSWORD 입력 :");
@@ -253,7 +253,7 @@ public class BoardTest {
 		}
 		System.out.println("------------------------------------");
 	}
-	static void signIn(Scanner sc, UserManager um) {
+	static void signIn(Scanner sc, IUserManager um) {
 		System.out.println("회원 가입을 시작하겠습니다.");
 		// SEQ, ID, PW, USERNAME, NICKNAME, EMAIL
 		System.out.println("ID 입력 :");
