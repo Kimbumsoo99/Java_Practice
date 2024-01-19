@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry excluding="programmers/implementation/close_letter/" kind="src" path="Code_test/src"/>
+	<classpathentry kind="src" path="Code_test/src/programmers/implementation/close_letter"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
