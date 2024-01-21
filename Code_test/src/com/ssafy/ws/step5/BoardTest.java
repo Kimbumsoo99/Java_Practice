@@ -124,7 +124,7 @@ public class BoardTest {
 			System.out.println("검색 결과가 없습니다.");
 		}else {
 			for (int i = 0; i < searchArticles.length; i++) {
-				if(searchArticles[i] instanceof ImageArticle img) {
+				if(searchArticles[i] instanceof ImageArticle) {
 					System.out.print("이미지 ");
 				}else {
 					System.out.print("텍스트 ");

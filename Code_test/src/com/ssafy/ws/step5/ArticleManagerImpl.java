@@ -14,12 +14,12 @@ public class ArticleManagerImpl implements IArticleManager{
 	public static IArticleManager getInstance() {
 		return instance;
 	}
-	
+
 	@Override
 	public Article[] getArticleList() {
 		return Arrays.copyOf(articles, articleSize);
 	}
-	
+
 	@Override
 	public Article getArticle(int articleId) {
 		for (int i = 0; i < articleSize; i++) {
@@ -29,12 +29,12 @@ public class ArticleManagerImpl implements IArticleManager{
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void addArticle(Article article) {
 		articles[articleSize++] = article;
 	}
-	
+
 	@Override
 	public void removeArticle(int articleId) {
 		Comment[] changeComments = new Comment[MAX_COMMENT_SIZE];
@@ -53,13 +53,13 @@ public class ArticleManagerImpl implements IArticleManager{
 				break;
 			}
 		}
-		
+
 		for (int i = idx; i < articleSize; i++) {
 			articles[i] = articles[i+1];
 		}
 		articleSize--;
 	}
-	
+
 	@Override
 	public void updateArticle(Article article) {
 		for (int i = 0; i < articleSize; i++) {
@@ -69,7 +69,7 @@ public class ArticleManagerImpl implements IArticleManager{
 			}
 		}
 	}
-	
+
 	@Override
 	public Article[] getTextArticleList() {
 		Article[] returnArticles = new Article[articleSize];
@@ -81,19 +81,22 @@ public class ArticleManagerImpl implements IArticleManager{
 		}
 		return Arrays.copyOf(returnArticles, idx);
 	}
-	
+
 	@Override
 	public ImageArticle[] getImageArticleList() {
 		ImageArticle[] returnArticles = new ImageArticle[articleSize];
 		int idx = 0;
 		for (int i = 0; i < articleSize; i++) {
-			if(articles[i] instanceof ImageArticle img) {
-				returnArticles[idx++] = img;
+//			if(articles[i] instanceof ImageArticle img) {
+//				returnArticles[idx++] = img; // JDK 15? 버전 이상 가능
+//			}
+			if(articles[i] instanceof ImageArticle) {
+				returnArticles[idx++] = (ImageArticle) articles[i];
 			}
 		}
 		return Arrays.copyOf(returnArticles, idx);
 	}
-	
+
 	@Override
 	public double getImageSizeAvg() {
 		ImageArticle[] imageArticles = getImageArticleList();
@@ -103,7 +106,7 @@ public class ArticleManagerImpl implements IArticleManager{
 		}
 		return avg / imageArticles.length;
 	}
-	
+
 	@Override
 	public Article[] search(int option, String keyword) {
 		Article[] returnArticles = new Article[articleSize];
@@ -167,7 +170,7 @@ public class ArticleManagerImpl implements IArticleManager{
 		}
 		return Arrays.copyOf(returnComments, idx);
 	}
-	
+
 	@Override
 	public Comment getComment(int commentId) {
 		for (int i = 0; i < commentSize; i++) {
@@ -177,5 +180,5 @@ public class ArticleManagerImpl implements IArticleManager{
 		}
 		return null;
 	}
-	
+
 }
