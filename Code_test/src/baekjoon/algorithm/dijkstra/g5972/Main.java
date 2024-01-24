@@ -24,7 +24,6 @@ public class Main {
         D = new int[N];
         visit = new boolean[N];
         Arrays.fill(D, INF);
-        D[0] = 0;
         int M = Integer.parseInt(st.nextToken());
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
@@ -44,15 +43,23 @@ public class Main {
     // PriorityQueue를 사용해서 했을 때 시간이 남았음.
     private static void findByPriorityQueue(int start, int finish) {
         PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[1] - o2[1]);
-        pq.offer(new int[]{start, 0});
-        D[start] = 0;
+        pq.offer(new int[]{start, 0}); // start를 PQ에 넣음
+        D[start] = 0; // start를 제외한 모든 지역은 INF
 
         while (!pq.isEmpty()) {
             int[] tmp = pq.poll();
-            for (int[] next : Graph[tmp[0]]) {
-                if (D[next[0]] > D[tmp[0]] + next[1]) {
-                    D[next[0]] = D[tmp[0]] + next[1];
-                    pq.offer(new int[]{next[0], D[next[0]]});
+            // 현재 선택된 Node
+            int choice = tmp[0];
+            int cow = tmp[1];
+
+            // Node와 간선으로 연결된 `chain` 확인
+            for (int[] chain : Graph[choice]) {
+                // 각 경로에 대하여 최솟값 저장 D[chain[0]] = Math.min(D[choice] + chain[1], D[chain[0]]);
+                // -> 연결된 노드에 대하여, Node 경유 + 연결 노드에 cow와 이미 저장된 경로 값 비교
+                // 만약, 기존 값 (INF)보다 작은 경우, 값을 바꾸고, PQ에 경로와 값 추가
+                if (D[chain[0]] > D[choice] + chain[1]) {
+                    D[chain[0]] = D[choice] + chain[1];
+                    pq.offer(new int[]{chain[0], D[chain[0]]});
                 }
             }
         }
