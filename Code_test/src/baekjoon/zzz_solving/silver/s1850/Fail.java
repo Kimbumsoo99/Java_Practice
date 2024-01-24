@@ -1,4 +1,4 @@
-package baekjoon.solving.silver.s1850;
+package baekjoon.zzz_solving.silver.s1850;
 
 import java.util.Scanner;
 

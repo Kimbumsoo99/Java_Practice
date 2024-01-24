@@ -1,4 +1,4 @@
-package baekjoon.solving.gold.classroom_allocation;
+package baekjoon.zzz_solving.gold.classroom_allocation;
 
 import java.util.*;
 
