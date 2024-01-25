@@ -1,184 +1,140 @@
 package com.ssafy.ws.step5;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ArticleManagerImpl implements IArticleManager{
-	private final int MAX_ARTICLE_SIZE = 100;
-	private final int MAX_COMMENT_SIZE = 100;
-	private Article[] articles = new Article[MAX_ARTICLE_SIZE];
-	private Comment[] comments = new Comment[MAX_COMMENT_SIZE];
-	private int articleSize;
-	private int commentSize;
+
+	List<Article> articles;
+	Map<Integer, List<Comment>> comments;
 	private static IArticleManager instance = new ArticleManagerImpl();
-	private ArticleManagerImpl() {}
+
+	private ArticleManagerImpl() {
+		articles = new ArrayList<>();
+		comments = new HashMap<>();
+	}
+
 	public static IArticleManager getInstance() {
 		return instance;
 	}
 
 	@Override
 	public Article[] getArticleList() {
-		return Arrays.copyOf(articles, articleSize);
+		return articles.toArray(Article[]::new);
 	}
 
 	@Override
 	public Article getArticle(int articleId) {
-		for (int i = 0; i < articleSize; i++) {
-			if(articles[i].getArticleld() == articleId) {
-				return articles[i];
-			}
-		}
-		return null;
+		return articles.stream()
+			.filter((article) -> article.getArticleld() == articleId)
+			.findFirst()
+			.get();
 	}
 
 	@Override
 	public void addArticle(Article article) {
-		articles[articleSize++] = article;
+		articles.add(article);
+		comments.put(article.getArticleld(), new ArrayList<>());
 	}
 
 	@Override
 	public void removeArticle(int articleId) {
-		Comment[] changeComments = new Comment[MAX_COMMENT_SIZE];
-		int idx = 0;
-		for (int i = 0; i < commentSize; i++) {
-			if(articleId != comments[i].getArticleld()) {
-				changeComments[idx++] = comments[i];
-			}
-		}
-		comments = changeComments;
-		idx = -1;
-		for (int i = 0; i < articleSize; i++) {
-			if(getArticle(articleId).hashCode() == articles[i].hashCode()) {
-				articles[i] = null;
-				idx = i;
-				break;
-			}
-		}
-
-		for (int i = idx; i < articleSize; i++) {
-			articles[i] = articles[i+1];
-		}
-		articleSize--;
+		articles.remove(getArticle(articleId));
+		comments.remove(articleId);
 	}
 
 	@Override
 	public void updateArticle(Article article) {
-		for (int i = 0; i < articleSize; i++) {
-			if(article.getArticleld() == articles[i].getArticleld()) {
-				articles[i] = article;
-				break;
-			}
-		}
+		Article at = getArticle(article.getArticleld());
+		at.setTitle(article.getTitle());
+		at.setContent(article.getContent());
+		at.setRegDate(article.getRegDate());
 	}
 
 	@Override
 	public Article[] getTextArticleList() {
-		Article[] returnArticles = new Article[articleSize];
-		int idx = 0;
-		for (int i = 0; i < articleSize; i++) {
-			if(!(articles[i] instanceof ImageArticle)) {
-				returnArticles[idx++] = articles[i];
-			}
-		}
-		return Arrays.copyOf(returnArticles, idx);
+//		List<Article> returnArt =  articles.stream()
+//			.filter(article -> !(article instanceof ImageArticle))
+//			.collect(Collectors.toList());
+//		return returnArt.toArray(new Article[returnArt.size()]);
+		return articles.stream()
+			.filter(article -> !(article instanceof ImageArticle))
+			.toArray(Article[]::new);
 	}
 
 	@Override
 	public ImageArticle[] getImageArticleList() {
-		ImageArticle[] returnArticles = new ImageArticle[articleSize];
-		int idx = 0;
-		for (int i = 0; i < articleSize; i++) {
-//			if(articles[i] instanceof ImageArticle img) {
-//				returnArticles[idx++] = img; // JDK 15? 버전 이상 가능
-//			}
-			if(articles[i] instanceof ImageArticle) {
-				returnArticles[idx++] = (ImageArticle) articles[i];
-			}
-		}
-		return Arrays.copyOf(returnArticles, idx);
+		return articles.stream()
+			.filter(art -> art instanceof ImageArticle)
+			.toArray(ImageArticle[]::new);
 	}
 
 	@Override
 	public double getImageSizeAvg() {
-		ImageArticle[] imageArticles = getImageArticleList();
-		double avg = 0.0;
-		for (int i = 0; i < imageArticles.length; i++) {
-			avg += (imageArticles[i].getHeight() * imageArticles[i].getWidth());
-		}
-		return avg / imageArticles.length;
+		return Arrays.stream(getImageArticleList())
+			.mapToDouble(art -> art.getHeight() + art.getWidth())
+			.average().orElse(0.0);
 	}
 
 	@Override
 	public Article[] search(int option, String keyword) {
-		Article[] returnArticles = new Article[articleSize];
 		int idx = 0;
 		switch (option) {
-		case 1:
-			for (int i = 0; i < articleSize; i++) {
-				if(articles[i].getTitle().contains(keyword)) {
-					returnArticles[idx++] = articles[i];
-				}
-			}
-			return Arrays.copyOf(returnArticles, idx);
-		case 2:
-			for (int i = 0; i < articleSize; i++) {
-				if(articles[i].getContent().contains(keyword)) {
-					returnArticles[idx++] = articles[i];
-				}
-			}
-			return Arrays.copyOf(returnArticles, idx);
-		default:
-			// 미완성
-			IUserManager um = UserManagerImpl.getInstance();
-			for (int i = 0; i < articleSize; i++) {
-				if(um.getUser(keyword) != null && articles[i].getUserSeq() == um.getUser(keyword).getUserSeq()) {
-					returnArticles[idx++] = articles[i];
-				}
-			}
-			return Arrays.copyOf(returnArticles, idx);
+			case 1: // 키워드 포함 제목
+				return articles.stream()
+					.filter(art -> art.getTitle().contains(keyword))
+					.toArray(Article[]::new);
+			case 2: // 키워드 포함 내용
+				return articles.stream()
+					.filter(art -> art.getContent().contains(keyword))
+					.toArray(Article[]::new);
+			default: // 유저 닉네임 일치 작성
+				// 미완성
+				IUserManager um = UserManagerImpl.getInstance();
+				return articles.stream()
+					.filter(art -> art.getUserSeq() == um.getUser(keyword).getUserSeq())
+					.toArray(Article[]::new);
 		}
 	}
 
 	@Override
 	public void addComment(Comment comment) {
-		comments[commentSize++] = comment;
+		comments.get(comment.getArticleld()).add(comment);
 	}
 
 	@Override
 	public void removeComment(int commentId) {
-		int idx = -1;
-		for (int i = 0; i < commentSize; i++) {
-			if(commentId == comments[i].getCommentId()) {
-				comments[i] = null;
-				idx = i;
-				break;
-			}
-		}
-		for (int i = idx; i < commentSize; i++) {
-			comments[i] = comments[i+1];
-		}
-		commentSize--;
+		Comment com = getComment(commentId);
+		comments.get(com.getArticleld()).remove(com);
 	}
 
 	@Override
 	public Comment[] getCommentList(int articleId) {
-		Comment[] returnComments = new Comment[commentSize];
-		int idx = 0;
-		for (int i = 0; i < commentSize; i++) {
-			if(comments[i].getArticleld() == articleId) {
-				returnComments[idx++] = comments[i];
-			}
-		}
-		return Arrays.copyOf(returnComments, idx);
+		return comments.get(articleId).stream()
+			.toArray(Comment[]::new);
 	}
+
+//	@Override
+//	public Comment getComment(int commentId) {
+//		// Map<Integer, List<Comment>> comments;
+//		List<Comment>[] lists = comments.keySet().stream()
+//			.toArray(List[]::new);
+//		for (List<Comment> list : lists) {
+//			return list.stream().filter(comment -> comment.getCommentId() == commentId)
+//				.findFirst().get();
+//		}
+//		return null;
+//	}
 
 	@Override
 	public Comment getComment(int commentId) {
-		for (int i = 0; i < commentSize; i++) {
-			if(comments[i].getCommentId() == commentId) {
-				return comments[i];
-			}
-		}
-		return null;
+		return comments.values().stream()
+			.flatMap(List::stream) // 댓글 리스트를 평면화하여 스트림 생성
+			.filter(comment -> comment.getCommentId() == commentId)
+			.findFirst()
+			.orElse(null); // 댓글을 찾지 못한 경우 null 반환
 	}
-
 }
