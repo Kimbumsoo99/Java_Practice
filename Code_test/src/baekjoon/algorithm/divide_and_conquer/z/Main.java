@@ -1,4 +1,4 @@
-package baekjoon.recursive.z;
+package baekjoon.algorithm.divide_and_conquer.z;
 
 import java.io.BufferedReader;
 import java.io.IOException;
