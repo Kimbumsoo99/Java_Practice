@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 // 1065번, 한수, 실버 IV 문제
-// Code_test/src/baekjoon/implementations/silver/s1065/Main.java
+// Code_test/src/baekjoon/implementations/silver/s1065/Fail.java
 public class Main {
 
     public static void main(String[] args) throws IOException {
