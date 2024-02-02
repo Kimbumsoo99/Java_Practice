@@ -1,4 +1,4 @@
-package baekjoon.queue.card1;
+package baekjoon.data_structure.queue.card1;
 
 import java.util.ArrayDeque;
 import java.util.Scanner;

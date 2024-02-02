@@ -1,10 +1,9 @@
-package baekjoon.queue.ac;
+package baekjoon.data_structure.queue.ac;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
-import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Solution {

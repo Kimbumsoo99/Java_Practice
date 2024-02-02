@@ -1,4 +1,4 @@
-package baekjoon.queue.ac;
+package baekjoon.data_structure.queue.ac;
 // https://st-lab.tistory.com/221 풀이
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

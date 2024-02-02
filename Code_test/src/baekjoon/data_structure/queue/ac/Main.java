@@ -1,4 +1,4 @@
-package baekjoon.queue.ac;
+package baekjoon.data_structure.queue.ac;
 
 import java.io.BufferedReader;
 import java.io.IOException;

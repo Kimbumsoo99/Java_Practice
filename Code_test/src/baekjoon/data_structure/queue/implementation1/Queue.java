@@ -1,4 +1,4 @@
-package baekjoon.queue.implementation1;
+package baekjoon.data_structure.queue.implementation1;
 
 class Queue {
     int DEFALUT_CAPACITY = 10000;

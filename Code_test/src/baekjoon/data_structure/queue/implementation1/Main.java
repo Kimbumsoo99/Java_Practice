@@ -1,4 +1,4 @@
-package baekjoon.queue.implementation1;
+package baekjoon.data_structure.queue.implementation1;
 
 import java.io.BufferedReader;
 import java.io.IOException;

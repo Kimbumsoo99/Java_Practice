@@ -1,4 +1,4 @@
-package baekjoon.queue.implementation2;
+package baekjoon.data_structure.queue.implementation2;
 
 class Queue {
     public static final int MAX_CAPACITY = 64;

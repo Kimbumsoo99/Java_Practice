@@ -1,6 +1,5 @@
-package baekjoon.stack.stack_sequence;
+package baekjoon.data_structure.stack.stack_sequence;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Stack;
 

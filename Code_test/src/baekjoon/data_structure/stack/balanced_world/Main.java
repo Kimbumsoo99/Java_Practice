@@ -1,4 +1,4 @@
-package baekjoon.stack.balanced_world;
+package baekjoon.data_structure.stack.balanced_world;
 
 import java.io.BufferedReader;
 import java.io.IOException;
