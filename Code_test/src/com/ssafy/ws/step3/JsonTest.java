@@ -1,6 +1,6 @@
 package com.ssafy.ws.step3;
 
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -66,24 +66,24 @@ class Person {
 public class JsonTest {
 
 	public static void main(String[] args) throws IOException {
-		Gson gson = new Gson();
-		Person person1 = new Person("임윤섭", 27, 187);
-
-		String personToJson = gson.toJson(person1);
-		System.out.println(personToJson);
-
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("person.json")));
-		gson.toJson(person1, bw);
-		bw.close();
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("person.json")));
-
-		Person person2 = gson.fromJson(br, Person.class);
-
-		// Q. person2의 내용을 출력해봅시다.
-		System.out.println("이름 : " + person2.getName());
-		System.out.println("나이 : " + person2.getAge());
-		System.out.println("키 : " + person2.getHeight());
+//		Gson gson = new Gson();
+//		Person person1 = new Person("임윤섭", 27, 187);
+//
+//		String personToJson = gson.toJson(person1);
+//		System.out.println(personToJson);
+//
+//		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("person.json")));
+//		gson.toJson(person1, bw);
+//		bw.close();
+//
+//		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("person.json")));
+//
+//		Person person2 = gson.fromJson(br, Person.class);
+//
+//		// Q. person2의 내용을 출력해봅시다.
+//		System.out.println("이름 : " + person2.getName());
+//		System.out.println("나이 : " + person2.getAge());
+//		System.out.println("키 : " + person2.getHeight());
 
 	}
 }

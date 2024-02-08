@@ -7,12 +7,12 @@ import java.util.StringTokenizer;
 
 public class Main {
     static char[][][] initCube = { // 앞, 위, 왼, 뒤, 아, 우
-        { { 'R', 'R', 'R' }, { 'R', 'R', 'R' }, { 'R', 'R', 'R' }, },
-        { { 'W', 'W', 'W' }, { 'W', 'W', 'W' }, { 'W', 'W', 'W' }, },
-        { { 'G', 'G', 'G' }, { 'G', 'G', 'G' }, { 'G', 'G', 'G' }, },
-        { { 'O', 'O', 'O' }, { 'O', 'O', 'O' }, { 'O', 'O', 'O' }, },
-        { { 'Y', 'Y', 'Y' }, { 'Y', 'Y', 'Y' }, { 'Y', 'Y', 'Y' }, },
-        { { 'B', 'B', 'B' }, { 'B', 'B', 'B' }, { 'B', 'B', 'B' }, }, };
+            {{'r', 'r', 'r'}, {'r', 'r', 'r'}, {'r', 'r', 'r'},},
+            {{'w', 'w', 'w'}, {'w', 'w', 'w'}, {'w', 'w', 'w'},},
+            {{'g', 'g', 'g'}, {'g', 'g', 'g'}, {'g', 'g', 'g'},},
+            {{'o', 'o', 'o'}, {'o', 'o', 'o'}, {'o', 'o', 'o'},},
+            {{'y', 'y', 'y'}, {'y', 'y', 'y'}, {'y', 'y', 'y'},},
+            {{'b', 'b', 'b'}, {'b', 'b', 'b'}, {'b', 'b', 'b'},},};
     static char[][][] cube;
     // 왼쪽 0 또는 오른쪽 1은 정방향 +1
     // 왼쪽 1 또는 오른쪽 0은 반대방향 -1
@@ -20,12 +20,13 @@ public class Main {
     // 위쪽 0 또는 오른쪽 1은 정방향 +1
     // 왼쪽 1 또는 오른쪽 0은 반대방향 -1
     static char[] udTurn = { 'F', 'R', 'B', 'L' };
+    static StringBuilder sb = new StringBuilder();
+
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
         StringTokenizer st = null;
-        StringBuilder sb = new StringBuilder();
         for (int test_case = 1; test_case < T + 1; test_case++) {
             int N = Integer.parseInt(br.readLine());
             st = new StringTokenizer(br.readLine());
@@ -36,6 +37,10 @@ public class Main {
                 char loc = tmp.charAt(0);
                 char dir = tmp.charAt(1); // + 1, - 0
                 rotate(loc, dir == '-' ? 0 : 1);
+//                System.out.println(loc + " " + dir + " " + (i + 1) + "단계");
+//                draw('U');
+//                draw('F');
+//                draw('L');
             }
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
@@ -45,6 +50,17 @@ public class Main {
             }
         }
         System.out.println(sb);
+    }
+    static void draw(char c){
+        System.out.println(c + " 방향");
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                sb.append(cube[mapping(c)][i][j]);
+            }
+            sb.append("\n");
+        }
+        System.out.println(sb);
+        sb = new StringBuilder();
     }
 
     static void init() {
@@ -63,66 +79,106 @@ public class Main {
         sideRotate(loc, dir);
     }
 
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
-    // 여기부터 다시 풀기
     static void sideRotate(char loc, int dir) {
         if (loc == 'F') {
             mappingTurnFront(dir);
         } else if (loc == 'B') {
             mappingTurnBack(dir);
-        } else {
-
+        } else if(loc == 'U' || loc == 'D'){
+            mappingTurnUpOrDown(loc, dir);
+        }else{
+            mappingTurnLeftOrRight(loc, dir);
         }
+    }
+    static void mappingTurnLeftOrRight(char loc, int dir) {
+        int idx = 0;
+        char dx[] = new char[]{'U', 'F', 'D', 'B'};
+        if(loc == 'R') idx = 2;
+        // Left 시계 or Right 반시계 U <- B 방향
+        if ((loc == 'L' && dir == 1) || (loc == 'R' && dir == 0)) {
+            dx = new char[]{'U', 'B', 'D', 'F'};
+        }
+        char[] tmp = new char[3];
+        for (int i = 0; i < 3; i++) {
+            tmp[i] = cube[mapping(dx[0])][i][idx];
+        }
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (dx[i] == 'B') {
+                    cube[mapping(dx[i])][2 - j][idx == 0 ? 2 : 0] = cube[mapping(dx[i + 1])][j][idx];
+                } else if (dx[i + 1] == 'B') {
+                    cube[mapping(dx[i])][j][idx] = cube[mapping(dx[i + 1])][2 - j][idx == 0 ? 2 : 0];
+                } else {
+                    cube[mapping(dx[i])][j][idx] = cube[mapping(dx[i + 1])][j][idx];
+                }
+            }
+        }
+        for (int j = 0; j < 3; j++) {
+            if (dx[3] == 'B') {
+                cube[mapping(dx[3])][2 - j][idx == 0 ? 2 : 0] = tmp[j];
+            } else {
+                cube[mapping(dx[3])][j][idx] = tmp[j];
+            }
+        }
+    }
+
+    static void mappingTurnUpOrDown(char loc, int dir) {
+        int idx = 0;
+        char dx[] = new char[]{'F', 'L', 'B', 'R'};
+        if (loc == 'D') idx = 2;
+        // UP 시계 or DOWN 반시계 F <- R 방향
+        if ((loc == 'U' && dir == 1) || (loc == 'D' && dir == 0)) {
+            dx = new char[]{'F', 'R', 'B', 'L'};
+        }
+        char[] tmp = cube[mapping(dx[0])][idx];
+        for (int i = 0; i < 3; i++) {
+            cube[mapping(dx[i])][idx] = cube[mapping(dx[(i + 1) % 4])][idx];
+        }
+        cube[mapping(dx[3])][idx] = tmp;
     }
 
     static void mappingTurnFront(int dir) {
         char[] get = new char[3];
         for (int i = 0; i < 3; i++) {
-            get[i] = cube[mapping('U')][0][i];
+            get[i] = cube[mapping('U')][2][i];
         }
-        if (dir == 1) {
+        if (dir == 1) { // 시계 +
             for (int i = 0; i < 3; i++) {
-                cube[mapping('U')][0][i] = cube[mapping('L')][2 - i][2];
-            }
-            for (int i = 0; i < 3; i++) {
+                cube[mapping('U')][2][i] = cube[mapping('L')][2 - i][2];
                 cube[mapping('L')][2 - i][2] = cube[mapping('D')][0][2 - i];
-            }
-            for (int i = 0; i < 3; i++) {
-                cube[mapping('D')][0][i] = cube[mapping('R')][i][0];
-            }
-            for (int i = 0; i < 3; i++) {
+                cube[mapping('D')][0][2 - i] = cube[mapping('R')][i][0];
                 cube[mapping('R')][i][0] = get[i];
             }
         } else {
             for (int i = 0; i < 3; i++) {
-                cube[mapping('U')][0][i] = cube[mapping('L')][2 - i][2];
-            }
-            for (int i = 0; i < 3; i++) {
-                cube[mapping('L')][2 - i][2] = cube[mapping('D')][0][2 - i];
-            }
-            for (int i = 0; i < 3; i++) {
-                cube[mapping('D')][0][i] = cube[mapping('R')][i][0];
-            }
-            for (int i = 0; i < 3; i++) {
-                cube[mapping('R')][i][0] = get[i];
+                cube[mapping('U')][2][i] = cube[mapping('R')][i][0];
+                cube[mapping('R')][i][0] = cube[mapping('D')][0][2 - i];
+                cube[mapping('D')][0][2 - i] = cube[mapping('L')][2 - i][2];
+                cube[mapping('L')][2 - i][2] = get[i];
             }
         }
     }
 
     static void mappingTurnBack(int dir) {
-
+        char[] get = new char[3];
+        for (int i = 0; i < 3; i++) {
+            get[i] = cube[mapping('U')][0][i];
+        }
+        if (dir == 1) { // 시계 +
+            for (int i = 0; i < 3; i++) {
+                cube[mapping('U')][0][i] = cube[mapping('R')][i][2];
+                cube[mapping('R')][i][2] = cube[mapping('D')][2][2 - i];
+                cube[mapping('D')][2][2 - i] = cube[mapping('L')][2 - i][0];
+                cube[mapping('L')][2 - i][0] = get[i];
+            }
+        } else {
+            for (int i = 0; i < 3; i++) {
+                cube[mapping('U')][0][i] = cube[mapping('L')][2 - i][0];
+                cube[mapping('L')][2 - i][0] = cube[mapping('D')][2][2 - i];
+                cube[mapping('D')][2][2 - i] = cube[mapping('R')][i][2];
+                cube[mapping('R')][i][2] = get[i];
+            }
+        }
     }
 
     static void twoDRotate(int lo, int dir) {
