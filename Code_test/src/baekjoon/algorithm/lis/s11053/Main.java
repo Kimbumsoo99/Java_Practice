@@ -1,4 +1,4 @@
-package baekjoon.dp.lis;
+package baekjoon.algorithm.lis.s11053;
 // 최장 증가 부분 수열 LIS 알고리즘
 
 import java.io.BufferedReader;
