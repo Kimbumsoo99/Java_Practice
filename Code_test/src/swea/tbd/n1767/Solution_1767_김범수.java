@@ -4,10 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Solution3 {
+public class Solution_1767_김범수 {
     static int N, Graph[][], cnt, answer, maxCore;
     static boolean[] visit;
     static ArrayList<int[]> coreList;
@@ -37,7 +36,6 @@ public class Solution3 {
                 }
             }
             visit = new boolean[cnt];
-            System.out.println(cnt);
             for (int i = cnt; i >= 0; i--) {
                 comb(0, 0, i);
                 if(answer < Integer.MAX_VALUE) break;
@@ -49,7 +47,6 @@ public class Solution3 {
 
     static void comb(int depth, int idx, int end) {
         if (depth == end) {
-            System.out.println(Arrays.toString(visit));
             simulation(0, 0);
             return;
         }
@@ -61,7 +58,6 @@ public class Solution3 {
     }
 
     static void simulation(int idx, int sum) {
-        System.out.println(idx + " " + sum);
         if (idx == cnt) {
             answer = Math.min(answer, sum); // 배열 끝까지 돌렸으면 이때의 최솟값 갱신
             return;
@@ -89,21 +85,15 @@ public class Solution3 {
             if (flag) {
                 simulation(idx + 1, sum + lan);
             }
+            nextY -= dy[i];
+            nextX -= dx[i];
             while (nextY != core[0] || nextX != core[1]) {
+                Graph[nextY][nextX] = 0;
                 nextY -= dy[i];
                 nextX -= dx[i];
-                Graph[nextY][nextX] = 0;
             }
         }
     }
-//    static boolean[][] copyMap() {
-//        boolean[][] copy = new boolean[N][N];
-//        for (int i = 0; i < N; i++) {
-//            copy[i] = visit[i].clone();
-//        }
-//        return copy;
-//    }
-
     static boolean isMap(int y, int x) {
         return (y >= 0 && x >= 0 && y < N && x < N);
     }
