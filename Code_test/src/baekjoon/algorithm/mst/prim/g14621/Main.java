@@ -61,8 +61,6 @@ public class Main {
         int weight = 0;
         while (!pq.isEmpty()) {
             Node tmp = pq.poll();
-//			System.out.println(Arrays.toString(visit));
-//			System.out.println(tmp.no);
             if (visit[tmp.no])
                 continue;
             if (cnt++ == N)
