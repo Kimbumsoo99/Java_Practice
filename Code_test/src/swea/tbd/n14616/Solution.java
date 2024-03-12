@@ -1,9 +1,7 @@
 package swea.tbd.n14616;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import java.util.Scanner;
+import java.util.TreeMap;
 
 class Solution {
     private static Scanner sc;
@@ -88,36 +86,20 @@ class Player implements Comparable<Player> {
 
 class UserSolution {
     int LPerN; // 리그 당 인원 수
-    ArrayList<Player>[] lists;
+    int N, L;
+    TreeMap<Player, Object>[] treeSets;
 
-//    public static void main(String[] args) {
-//        UserSolution u = new UserSolution();
-//        u.init(15, 3, new int[] { 1, 5, 6, 8, 7, 3, 2, 1, 4, 5, 9, 8, 7, 6, 1 });
-//        System.out.println("Move");
-//        System.out.println(u.move());
-//        System.out.println(u.move());
-//        System.out.println(u.trade());
-//        System.out.println(u.trade());
-//        System.out.println(u.move());
-//        System.out.println(u.trade());
-//    }
-
-    /**
-     *
-     * @param N        선수들의 수
-     * @param L        리그의 수
-     * @param mAbility 각 선수들의 능력 값
-     */
     void init(int N, int L, int mAbility[]) {
+        this.N = N;
+        this.L = L;
         this.LPerN = N / L;
-        lists = new ArrayList[L];
+        treeSets = new TreeMap[L];
         for (int i = 0; i < L; i++) {
-            lists[i] = new ArrayList<>();
+            treeSets[i] = new TreeMap<>();
         }
         for (int i = 0; i < N; i++) {
-            lists[i / LPerN].add(new Player(i, mAbility[i]));
+            treeSets[i / LPerN].put(new Player(i, mAbility[i]), null);
         }
-//        System.out.println("size : " + lists.length);
     }
 
     /**
@@ -126,23 +108,23 @@ class UserSolution {
      */
     int move() {
         int sum = 0;
-        Player[][] endPoint = new Player[lists.length][2];
+        Player[][] swap = new Player[L][2];
         // 1. 모든 PriorityQueue에 대하여 값을 poll 한다.
         // 2. 모든 pqs에서 첫번째 원소와 마지막 원소에 대하여 저장한다.
-        for (int i = 0; i < lists.length; i++) {
-            Collections.sort(this.lists[i]);
-            Player first = lists[i].get(0);
-            Player last = lists[i].get(lists[i].size() - 1);
-            endPoint[i][0] = first;
-            endPoint[i][1] = last;
-//            System.out.println("출력 : " + Arrays.toString(endPoint[i]));
+        for (int i = 0; i < L; i++) {
+            Player first = treeSets[i].firstKey();
+            Player last = treeSets[i].lastKey();
+            swap[i][0] = first;
+            swap[i][1] = last;
         }
 
-        for (int i = 0; i < lists.length - 1; i++) {
-            lists[i + 1].set(0, endPoint[i][1]);
-            sum += endPoint[i][1].idx;
-            lists[i].set(lists[i].size() - 1, endPoint[i + 1][0]);
-            sum += endPoint[i + 1][0].idx;
+        for (int i = 0; i < L - 1; i++) {
+            treeSets[i].remove(swap[i][1]);
+            treeSets[i + 1].remove(swap[i + 1][0]);
+            treeSets[i].put(swap[i + 1][0], null);
+            treeSets[i + 1].put(swap[i][1], null);
+            sum += swap[i][1].idx;
+            sum += swap[i + 1][0].idx;
         }
 
         return sum;
@@ -155,25 +137,32 @@ class UserSolution {
     int trade() {
         int mid = (LPerN + 1) / 2;
         int sum = 0;
-        Player[][] endPoint = new Player[lists.length][2];
+        Player[][] swap = new Player[L][2];
         // 1. 모든 PriorityQueue에 대하여 값을 poll 한다.
         // 2. 모든 pqs에서 첫번째 원소와 마지막 원소에 대하여 저장한다.
-        for (int i = 0; i < lists.length; i++) {
-            Collections.sort(this.lists[i]);
-            Player first = lists[i].get(0);
-            Player midPlayer = lists[i].get(mid - 1);
-            endPoint[i][0] = first;
-            endPoint[i][1] = midPlayer;
-//            System.out.println("출력 : " + Arrays.toString(endPoint[i]));
+        for (int i = 0; i < L; i++) {
+            Player first = treeSets[i].firstKey();
+            Player midPlayer = null;
+            int idx = 0;
+            for (Player p : treeSets[i].keySet()) {
+                if (++idx == mid) {
+//					System.out.println(p);
+                    midPlayer = p;
+                    break;
+                }
+            }
+            swap[i][0] = first;
+            swap[i][1] = midPlayer;
         }
 
-        for (int i = 0; i < lists.length - 1; i++) {
-            lists[i + 1].set(0, endPoint[i][1]);
-            sum += endPoint[i][1].idx;
-            lists[i].set(mid - 1, endPoint[i + 1][0]);
-            sum += endPoint[i + 1][0].idx;
+        for (int i = 0; i < L - 1; i++) {
+            treeSets[i].remove(swap[i][1]);
+            treeSets[i + 1].remove(swap[i + 1][0]);
+            treeSets[i].put(swap[i + 1][0], null);
+            treeSets[i + 1].put(swap[i][1], null);
+            sum += swap[i][1].idx;
+            sum += swap[i + 1][0].idx;
         }
-
         return sum;
     }
 
