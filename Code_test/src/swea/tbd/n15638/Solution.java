@@ -1,10 +1,9 @@
 package swea.tbd.n15638;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Scanner;
 
 public class Solution {
@@ -121,224 +120,280 @@ public class Solution {
     }
 }
 
-
-class Nation{
-    String king;
-    int y, x, soldiers, teamId;
-
-    public Nation(String king, int y, int x, int soldiers, int teamId) {
-        this.king = king;
-        this.y = y;
-        this.x = x;
-        this.soldiers = soldiers;
-        this.teamId = teamId;
-    }
-
-    @Override
-    public String toString() {
-        return "Nation{" +
-            "king='" + king + '\'' +
-            ", y=" + y +
-            ", x=" + x +
-            ", soldiers=" + soldiers +
-            ", teamId=" + teamId +
-            '}';
-    }
+class NationInfo {
+    int x, y, soldierNum;
 }
-class UserSolution {
-    int N;
-    // 동맹 관계를 저장하는 Map
-    HashMap<Integer, HashSet<String>> team; // 팀 Id, 팀원 이름
-    // 적대 관계를 저장하는 Map
-    HashMap<Integer, HashSet<Integer>> enemy; // 팀 Id, 적대 팀 ID
-    // 본인의 땅을 저장하는 Graph와 HashMap
-    HashMap<String, Nation> areaMap;
-    Nation[][] map;
-    int[] dx = {-1, 0, 1, -1, 1, -1, 0, 1}, dy = {-1, -1, -1, 0, 0, 1, 1, 1};
 
-    void init(int N, int mSoldier[][], char mMonarch[][][]) {
-        this.N = N; // N * N 영토
-        map = new Nation[N][N];
-        team = new HashMap<>();
-        enemy = new HashMap<>();
-        areaMap = new HashMap<>();
-        int idx = 0;
+class UserSolution {
+
+    int[] parents;
+    ArrayList<Integer>[] unionList;
+    ArrayList<Integer>[] enemyList;
+
+    int[][] nationPosition;
+    NationInfo[] nationInfoList;
+
+    HashMap<String, Integer> monarchHM;
+    int nationCnt;
+
+    int N;
+
+    // 상 우상 우 우하 하 좌하 좌 좌상
+    static int[] dx = {-1, -1, 0, 1, 1, 1, 0, -1};
+    static int[] dy = {0, 1, 1, 1, 0, -1, -1, -1};
+
+    void init(int n, int[][] mSoldier, char[][][] mMonarch) {
+        N = n;
+
+        parents = new int[8625];
+        unionList = new ArrayList[625];
+        enemyList = new ArrayList[625];
+        for (int i = 0; i < 625; i++) {
+            unionList[i] = new ArrayList<>();
+            enemyList[i] = new ArrayList<>();
+        }
+
+        nationPosition = new int[25][25];
+        nationInfoList = new NationInfo[8625];
+        for (int i = 0; i < 8625; i++) {
+            nationInfoList[i] = new NationInfo();
+        }
+
+        monarchHM = new HashMap<>();
+        nationCnt = 0;
+
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                String monarch = charConvertToString(mMonarch[i][j]);
-                map[i][j] = new Nation(monarch, i, j, mSoldier[i][j], idx);
-                areaMap.put(monarch, map[i][j]);
-                team.put(idx, new HashSet<>());
-                team.get(idx).add(monarch);
-                enemy.put(idx, new HashSet<>());
-                idx++;
+                String monarchName = charConvertToString(mMonarch[i][j]);
+
+                // String -> int idx 로 변환 : HM 사용
+                monarchHM.put(monarchName, monarchHM.getOrDefault(monarchName, 0) + nationCnt);
+
+                // 최초 부모는 자기 자신
+                parents[nationCnt] = nationCnt;
+
+                // 위치 기록
+                nationPosition[i][j] = nationCnt;
+
+                // 국가 정보 기록
+                nationInfoList[nationCnt].soldierNum = mSoldier[i][j];
+                nationInfoList[nationCnt].x = i;
+                nationInfoList[nationCnt].y = j;
+
+                // 자기 자신도 자신의 동맹에 추가
+                unionList[nationCnt].add(nationCnt);
+
+                nationCnt++;
             }
         }
-    }
-    String charConvertToString(char[] c){
-        StringBuilder sb = new StringBuilder();
-        int idx = 0;
-        while (c[idx] != '\0') {
-            sb.append(c[idx++]);
-        }
-        return sb.toString();
+
+        nationCnt = N * N;
     }
 
     void destroy() {
-
     }
 
-    int ally(char mMonarchA[], char mMonarchB[]) {
+    int ally(char[] mMonarchA, char[] mMonarchB) {
         String monarchA = charConvertToString(mMonarchA);
         String monarchB = charConvertToString(mMonarchB);
-        Nation A = areaMap.get(monarchA);
-        Nation B = areaMap.get(monarchB);
-        Iterator<String> it;
-//        System.out.println(A);
-//        it = enemy.get(A.teamId).iterator();
-//        while (it.hasNext()) {
-//            System.out.print(it.next() + "\t");
-//        }
-//        System.out.println();
-//        System.out.println(B);
-//        it = enemy.get(B.teamId).iterator();
-//        while (it.hasNext()) {
-//            System.out.print(it.next() + "\t");
-//        }
-//        System.out.println();
 
-        if (A.teamId == B.teamId) {
+        int idxA = monarchHM.get(monarchA);
+        int idxB = monarchHM.get(monarchB);
+
+        if (isUnion(idxA, idxB)) {
             return -1;
-        } else if (enemy.get(A.teamId).contains(B.teamId)) {
+        }
+        if (isEnemy(idxA, idxB)) {
             return -2;
         }
 
-        Nation smallId = A;
-        Nation bigId = B;
-        if (B.teamId < A.teamId) {
-            smallId = B;
-            bigId = A;
-        }
+        makeUnion(idxA, idxB);
 
-        it = team.get(bigId.teamId).iterator();
-        while (it.hasNext()) {
-            team.get(smallId.teamId).add(it.next());
-        }
-//        Iterator<Integer> enemyTeamIt = enemy.get(bigId.teamId).iterator();
-//        while (enemyTeamIt.hasNext()) {
-//            enemy.get(smallId.teamId).add(enemyTeamIt.next());
-//        }
-        Iterator<Integer> enemyIt = enemy.keySet().iterator();
-        while (enemyIt.hasNext()) {
-            HashSet<Integer> set = enemy.get(enemyIt.next());
-            if (set.contains(bigId.teamId)) {
-                set.remove(bigId.teamId);
-                set.add(smallId.teamId);
-            }
-        }
-        team.remove(bigId.teamId);
-        enemy.remove(bigId.teamId);
-
-        bigId.teamId = smallId.teamId;
-        it = team.get(smallId.teamId).iterator();
-        while (it.hasNext()) {
-            areaMap.get(it.next()).teamId = smallId.teamId;
-        }
-        System.out.println("UserSolution.ally : " + team.get(smallId.teamId) + " " + enemy.get(smallId.teamId));
         return 1;
     }
 
-    int attack(char mMonarchA[], char mMonarchB[], char mGeneral[]) {
+    int attack(char[] mMonarchA, char[] mMonarchB, char[] mGeneral) {
         String monarchA = charConvertToString(mMonarchA);
         String monarchB = charConvertToString(mMonarchB);
-        Nation A = areaMap.get(monarchA);
-        Nation B = areaMap.get(monarchB);
-        if (A.teamId == B.teamId) {
+        String general = charConvertToString(mGeneral);
+
+        int idxA = monarchHM.get(monarchA);
+        int idxB = monarchHM.get(monarchB);
+
+        // 동맹 관계면 -1 반환
+        if (isUnion(idxA, idxB)) {
             return -1;
         }
 
-        int currentY = B.y;
-        int currentX = B.x;
-        boolean flag = false;
-        int sumEnemy = 0;
-        int sumTeam = B.soldiers;
-        for (int i = 0; i < dx.length; i++) {
-            int nextY = currentY + dy[i];
-            int nextX = currentX + dx[i];
-            if (!isMap(nextY, nextX)) {
-                continue;
-            }
+        // 인접 동맹 확인
+        int Bx = nationInfoList[idxB].x;
+        int By = nationInfoList[idxB].y;
 
-            if (map[nextY][nextX].teamId == A.teamId) {
-//                System.out.println(map[nextY][nextX]);
-                flag = true;
-//                System.out.println("enemy 병사의 수 : " + (map[nextY][nextX].soldiers / 2));
-                sumEnemy += map[nextY][nextX].soldiers / 2;
-            } else if (map[nextY][nextX].teamId == B.teamId) {
-//                System.out.println(map[nextY][nextX]);
-                sumTeam += map[nextY][nextX].soldiers / 2;
-//                System.out.println("team 병사의 수 : " + (map[nextY][nextX].soldiers / 2));
+        boolean isEnemy = false;
+        for (int d = 0; d < 8; d++) {
+            int nx = Bx + dx[d];
+            int ny = By + dy[d];
+
+            if (isBoundary(nx, ny)) {
+                // 적군의 루트와 다음 좌표에 위치한 군주의 루트가 같으면 적군이 존재하는 것
+                if (findSet(idxA) == findSet(nationPosition[nx][ny])) {
+                    isEnemy = true;
+                    break;
+                }
             }
         }
-        if (!flag) {
+
+        // 하나라도 적군이 없다면 -2 반환
+        if (!isEnemy) {
             return -2;
         }
 
-        for (int i = 0; i < dx.length; i++) {
-            int nextY = currentY + dy[i];
-            int nextX = currentX + dx[i];
-            if (!isMap(nextY, nextX)) {
-                continue;
-            }
-            if (map[nextY][nextX].teamId == A.teamId) {
-                map[nextY][nextX].soldiers /= 2;
-            } else if (map[nextY][nextX].teamId == B.teamId) {
-                map[nextY][nextX].soldiers /= 2;
+        makeEnemy(idxA, idxB);
+
+        int totalSoldierA = 0;
+        int totalSoldierB = nationInfoList[idxB].soldierNum;
+        int dispatchCnt = 0;
+
+        for (int d = 0; d < 8; d++) {
+            int nx = Bx + dx[d];
+            int ny = By + dy[d];
+
+            if (isBoundary(nx, ny)) {
+                // B 기준 - A는 적군. 적군이면 병사 수 / 2 파견
+                if (findSet(idxA) == findSet(nationPosition[nx][ny])) {
+                    dispatchCnt = nationInfoList[nationPosition[nx][ny]].soldierNum / 2;
+                    nationInfoList[nationPosition[nx][ny]].soldierNum -= dispatchCnt;
+                    totalSoldierA += dispatchCnt;
+                }
+                // B 기준 - B 아군
+                else if (findSet(idxB) == findSet(nationPosition[nx][ny])) {
+                    dispatchCnt = nationInfoList[nationPosition[nx][ny]].soldierNum / 2;
+                    nationInfoList[nationPosition[nx][ny]].soldierNum -= dispatchCnt;
+                    totalSoldierB += dispatchCnt;
+                }
             }
         }
 
-        System.out.println(sumEnemy + " <- Enemy | Team -> " + sumTeam);
-        System.out.println(A + "\n" + B);
-        // 전투 발생 적대 관계 지정
-        enemy.get(A.teamId).add(B.teamId);
-        enemy.get(B.teamId).add(A.teamId);
-
-        if (sumEnemy > sumTeam) { // 공격 성공
-            String general = charConvertToString(mGeneral);
-            map[currentY][currentX] = new Nation(general, currentY, currentX,
-                sumEnemy - sumTeam, A.teamId);
-            areaMap.remove(monarchB);
-            areaMap.put(general, map[currentY][currentX]);
-            team.get(B.teamId).remove(monarchB);
-            return 1;
-        } else { // 공격 실패
-            B.soldiers = sumTeam - sumEnemy;
+        // 방어 성공 0 리턴
+        if (totalSoldierB >= totalSoldierA) {
+            nationInfoList[idxB].soldierNum = totalSoldierB - totalSoldierA;
             return 0;
         }
+
+        // 공격 성공하면 공격지 군주는 처형
+        unionList[findSet(idxB)].remove((Integer) idxB);
+
+        // 공격지였던 영토는 동맹관계, 적대관계도 없는 새 영토가 된다.
+        nationInfoList[idxB].soldierNum = totalSoldierA - totalSoldierB; // 남은 병사 결정
+
+        // 새 군주 ID 인 nationCnt 로 정보들을 새로 입력
+        nationInfoList[nationCnt] = nationInfoList[idxB];
+        nationPosition[nationInfoList[nationCnt].x][nationInfoList[nationCnt].y] = nationCnt;
+
+        // 새로운 군주 등극
+        monarchHM.put(general, monarchHM.getOrDefault(general, 0) + nationCnt);
+
+        // 동맹은 A 에 편입, 적대관계 또한 동일한다.
+        parents[nationCnt] = findSet(idxA);
+        unionList[findSet(idxA)].add(nationCnt);
+
+        nationCnt++;
+
+        return 1;
     }
 
-    int recruit(char mMonarch[], int mNum, int mOption) {
-        String monarchA = charConvertToString(mMonarch);
-        Nation A = areaMap.get(monarchA);
+    boolean isBoundary(int x, int y) {
+        return 0 <= x && x < N && 0 <= y && y < N;
+    }
+
+    int recruit(char[] mMonarch, int mNum, int mOption) {
+        String monarch = charConvertToString(mMonarch);
+
+        int recruitCnt = 0;
+
         if (mOption == 0) {
-            A.soldiers += mNum;
-            return A.soldiers;
+            int idx = monarchHM.get(monarch);
+            nationInfoList[idx].soldierNum += mNum;
+            recruitCnt = nationInfoList[idx].soldierNum;
+        } else {
+            int rootA = findSet(monarchHM.get(monarch));
+            for (int allies : unionList[rootA]) {
+                nationInfoList[allies].soldierNum += mNum;
+                recruitCnt += nationInfoList[allies].soldierNum;
+            }
         }
-        System.out.println(A);
 
-        System.out.println("UserSolution.recruit : " + team.get(A.teamId));
-        // 1인 경우
-        Iterator<String> it = team.get(A.teamId).iterator();
-        int sum = 0;
-        while (it.hasNext()) {
-            Nation tmp = areaMap.get(it.next());
-            tmp.soldiers += mNum;
-            sum += tmp.soldiers;
-        }
-        return sum;
+        return recruitCnt;
     }
 
-    boolean isMap(int y, int x){
-        return y >= 0 && x >= 0 && y < N && x < N;
+    int findSet(int x) {
+        if (x == parents[x]) {
+            return x;
+        } else {
+            return parents[x] = findSet(parents[x]);
+        }
+    }
+
+    void makeUnion(int x, int y) {
+        x = findSet(x);
+        y = findSet(y);
+
+        // x 기준으로 몰아준다.
+        if (x != y) {
+            parents[y] = x;
+
+            // x 의 동맹 리스트에 y 동맹 리스트 추가
+            for (int allies : unionList[y]) {
+                unionList[x].add(allies);
+            }
+            // x 의 적 리스트에 y 적 리스트 추가
+            for (int enemy : enemyList[y]) {
+                enemyList[x].add(enemy);
+            }
+        }
+    }
+
+    boolean isUnion(int x, int y) {
+        x = findSet(x);
+        y = findSet(y);
+
+        return x == y;
+    }
+
+    boolean isEnemy(int x, int y) {
+        x = findSet(x);
+        y = findSet(y);
+
+        for (int enemy : enemyList[x]) {
+            if (findSet(enemy) == y) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void makeEnemy(int x, int y) {
+        x = findSet(x);
+        y = findSet(y);
+
+        if (x == y || isEnemy(x, y)) {
+            return;
+        }
+
+        enemyList[x].add(y);
+        enemyList[y].add(x);
+    }
+
+    String charConvertToString(char[] arr) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] != '\0') {
+                sb.append(arr[i]);
+            }
+        }
+
+        return sb.toString();
     }
 }
