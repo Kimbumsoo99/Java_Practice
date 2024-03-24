@@ -1,5 +1,8 @@
+package programmers.implementation.clean_desktop;
+
 import java.util.*;
-class Solution {
+
+public class Solution {
     int Graph[][], N, M;
     int maxY, maxX, minY, minX;
     public int[] solution(String[] wallpaper) {
