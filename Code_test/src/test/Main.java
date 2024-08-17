@@ -1,37 +1,78 @@
 package test;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class Main {
 
-    public static void main(String[] args) {
-        LocalDateTime timePoint = LocalDateTime.now(); // 현재의 날짜와 시간
+    ArrayList<Meeting> meetings = new ArrayList<>();
 
-// 2012년 12월 12일의 시간에 대한 정보를 가지는 LocalDate객체를 만드는 방법
-        LocalDate ld1 = LocalDate.of(2012, Month.DECEMBER, 12); // 2012-12-12 from values
-// 17시 18분에 대한 LocalTime객체를 구한다.
-        LocalTime lt1 = LocalTime.of(17, 18); // 17:18 (17시 18분)the train I took home today
-// 10시 15분 30초라는 문자열에 대한 LocalTime객체를 구한다.
-        LocalTime lt2 = LocalTime.parse("10:15:30"); // From a String
-
-        LocalDate theDate = timePoint.toLocalDate();
-        System.out.println(ld1);
-        System.out.println(lt1);
-        System.out.println(lt2);
-        System.out.println(theDate);
-
-
-        Month month = timePoint.getMonth();
-        System.out.println(month);
-
-        int day = timePoint.getDayOfMonth();
-        int hour = timePoint.getHour();
-        int minute = timePoint.getMinute();
-        int second = timePoint.getSecond();
-// 달을 숫자로 출력한다 1월도 1부터 시작하는 것을 알 수 있습니다.
-        System.out.println(month.getValue() + "/" + day + "  " + hour + ":" + minute + ":" + second);
+    public static void main(String[] args) throws IOException {
+        new Main().solution();
     }
+
+    public void solution() throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+
+        // N개의 회의를 모두 진행할 수 있는 최소 회의실 개수
+        // 시작 - 끝 시간
+        // 끝 == 시작이어도 가능하다.
+
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            int A = Integer.parseInt(st.nextToken());
+            int B = Integer.parseInt(st.nextToken());
+            meetings.add(new Meeting(A, B));
+        }
+        
+        // 시작 순서대로 정렬
+        Collections.sort(meetings, (o1, o2) -> {
+            return o1.startTime - o2.startTime;
+        });
+
+        // 끝나는 시간 순으로 정렬하면서 빼기
+        PriorityQueue<Meeting> pq = new PriorityQueue<>((o1, o2) -> {
+            return o1.endTime - o2.endTime;
+        });
+
+        for (Meeting meeting : meetings) {
+            if(pq.isEmpty()){
+                
+            } else if (pq.peek().endTime <= meeting.startTime) {
+
+            }
+
+            pq.offer(meeting);
+
+        }
+
+
+
+    }
+
+}
+
+class Meeting{
+    int startTime;
+    int endTime;
+
+    public Meeting(int startTime, int endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public Meeting(){}
+
+
 }
