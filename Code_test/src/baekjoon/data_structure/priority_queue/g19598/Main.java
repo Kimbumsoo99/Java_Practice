@@ -1,16 +1,9 @@
-package test;
+package baekjoon.data_structure.priority_queue.g19598;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
 
@@ -29,10 +22,12 @@ public class Main {
         // 시작 - 끝 시간
         // 끝 == 시작이어도 가능하다.
 
+        int max = 0;
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             int A = Integer.parseInt(st.nextToken());
             int B = Integer.parseInt(st.nextToken());
+            max = Math.max(max, B); // 끝나는 최대 시간
             meetings.add(new Meeting(A, B));
         }
         
@@ -46,21 +41,24 @@ public class Main {
             return o1.endTime - o2.endTime;
         });
 
+        // 가장 빠른시간 삽입 + 1
+        // 모든 pq를 돌면서 가장 빨리 끝나는 시간 찾아보기
+        // 찾았다면, 해당 pq 요소 빼고, 삽입
+        // 마지막 순회를 돌고난 뒤 size() 체크
         for (Meeting meeting : meetings) {
-            if(pq.isEmpty()){
-                
+//            System.out.printf("meetings = %s, pq.size() = %d\n", meeting.toString(), pq.size());
+            if (pq.isEmpty()) {
+                pq.offer(meeting);
             } else if (pq.peek().endTime <= meeting.startTime) {
-
+                Meeting reservedMeeting = pq.poll();
+                pq.offer(meeting);
+            } else {
+                pq.offer(meeting);
             }
-
-            pq.offer(meeting);
-
         }
 
-
-
+        System.out.println(pq.size());
     }
-
 }
 
 class Meeting{
@@ -75,4 +73,11 @@ class Meeting{
     public Meeting(){}
 
 
+    @Override
+    public String toString() {
+        return "Meeting{" +
+                "startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
+    }
 }
