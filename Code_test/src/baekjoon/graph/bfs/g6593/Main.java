@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -40,6 +41,7 @@ public class Main {
                         }
                     }
                 }
+                br.readLine();
             }
 
 
@@ -54,12 +56,26 @@ public class Main {
     }
 
     static int bfs(){
-        int time = 0;
-
         ArrayDeque<int[]> dq = new ArrayDeque<>();
-        dq.offer(start);
+        dq.offer(new int[]{start[0], start[1], start[2], 0});
+        while (!dq.isEmpty()) {
+            int[] tmp = dq.pollFirst();
 
-        return time;
+            for (int i = 0; i < 6; i++) {
+                int nextZ = tmp[0] + dz[i];
+                int nextY = tmp[1] + dy[i];
+                int nextX = tmp[2] + dx[i];
+                if (isMap(nextZ, nextY, nextX)) {
+                    if (!visit[nextZ][nextY][nextX] && Graph[nextZ][nextY][nextX] == 0) {
+                        dq.offer(new int[]{nextZ, nextY, nextX, tmp[3] + 1});
+                        visit[nextZ][nextY][nextX] = true;
+                    }else if(Graph[nextZ][nextY][nextX] == 3){
+                        return tmp[3] + 1;
+                    }
+                }
+            }
+        }
+        return -1;
     }
 
     public static boolean isMap(int z, int y, int x){
