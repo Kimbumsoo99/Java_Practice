@@ -18,8 +18,8 @@ public class Main {
 
         // make
         parents = new int[N + 1];
-        for (int i = 0; i < N; i++) {
-            parents[i + 1] = i + 1;
+        for (int i = 1; i < N + 1; i++) {
+            parents[i] = i;
         }
 
         pay = new int[N + 1];
@@ -30,7 +30,7 @@ public class Main {
             pay[i] = Integer.parseInt(st.nextToken());
         }
 
-        while (M-- > 0) {
+        while (M-->0) {
             st = new StringTokenizer(br.readLine());
 
             int A = Integer.parseInt(st.nextToken());
@@ -54,8 +54,6 @@ public class Main {
             visited[i] = true;
         }
 
-        System.out.println(sum);
-
         if (sum > K)
             System.out.println("Oh no");
         else
@@ -73,9 +71,9 @@ public class Main {
         int pB = find(b);
 
         if (pay[pA] >= pay[pB]) {
-            pay[pA] = pay[pB];
+            parents[pA] = parents[pB];
         } else {
-            pay[pB] = pay[pA];
+            parents[pB] = parents[pA];
         }
     }
 }
