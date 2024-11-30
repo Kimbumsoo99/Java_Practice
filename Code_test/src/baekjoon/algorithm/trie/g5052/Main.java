@@ -18,8 +18,10 @@ public class Main {
             N = Integer.parseInt(br.readLine());
             flag = false;
             Trie trie = new Trie();
-            String tel = br.readLine();
-            trie.insert(tel);
+            for (int j = 0; j < N; j++) {
+                String tel = br.readLine();
+                trie.insert(tel);
+            }
 
             search(trie.root);
 
@@ -33,7 +35,6 @@ public class Main {
 
     private static void search(Node cur) {
         if(flag) return;
-        System.out.println(cur);
 
         if (cur.isEnd && !cur.children.isEmpty()) {
             flag = true;
@@ -93,7 +94,7 @@ public class Main {
 
         @Override
         public String toString() {
-            return children.keySet();
+            return children.keySet().toString() + " " + isEnd;
         }
     }
 
