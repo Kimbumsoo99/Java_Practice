@@ -7,23 +7,26 @@ import java.io.InputStreamReader;
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-        while(true) {
-            String N = br.readLine();
-            int length = 1;
-            if(N.equals("0")) {
+        int[] tmp = new int[10];
+        tmp[0] = 4;
+        tmp[1] = 2;
+        for (int i = 2; i < 10; i++) {
+            tmp[i] = 3;
+        }
+        StringBuilder sb = new StringBuilder();
+        while (true) {
+            int num = Integer.parseInt(br.readLine());
+            if (num == 0) {
                 break;
             }
-            for(int i = 0; i < N.length(); i++) {
-                if(N.charAt(i) == '1') {
-                    length += 3;
-                }else if(N.charAt(i) == '0') {
-                    length += 5;
-                }else {
-                    length += 4;
-                }
+            int answer = 1;
+            while (num > 0) {
+                int mod = num % 10;
+                answer += tmp[mod] + 1;
+                num /= 10;
             }
-            System.out.println(length);
+            sb.append(answer).append("\n");
         }
+        System.out.println(sb);
     }
 }
